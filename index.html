@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relação de Colaboradores - Julho 2025</title>
+    <!-- Inclui o Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        /* Estilo para a tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 0.75rem; /* rounded-lg */
+            overflow: hidden; /* Garante que os cantos arredondados sejam aplicados */
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* border-b */
+        }
+        th {
+            background-color: #4a5568; /* gray-700 */
+            color: #ffffff; /* white */
+            font-weight: 600; /* semibold */
+            text-transform: uppercase;
+            font-size: 0.875rem; /* text-sm */
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f7fafc; /* gray-50 */
+        }
+        tbody tr:hover {
+            background-color: #edf2f7; /* gray-100 */
+        }
+        .container {
+            max-width: 100%;
+            overflow-x: auto; /* Adiciona rolagem horizontal para tabelas grandes em telas pequenas */
+        }
+        .dashboard-card {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .dashboard-card h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* semibold */
+            color: #4a5568; /* gray-700 */
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-card p {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* bold */
+            color: #2d3748; /* gray-800 */
+        }
+        .upcoming-item {
+            background-color: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .upcoming-item strong {
+            color: #2d3748;
+        }
+        .upcoming-item span {
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+        /* Estilos para os modais (confirmação e adicionar) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%; /* Could be more responsive */
+            max-width: 600px; /* Increased max-width for add form */
+            text-align: center;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .modal-buttons button.confirm {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .modal-buttons button.confirm:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+        .modal-buttons button.cancel {
+            background-color: #e2e8f0; /* gray-200 */
+            color: #333;
+        }
+        .modal-buttons button.cancel:hover {
+            background-color: #cbd5e0; /* gray-300 */
+        }
+        .modal-buttons button.save {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+        }
+        .modal-buttons button.save:hover {
+            background-color: #16a34a; /* green-600 */
+        }
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            box-sizing: border-box; /* Ensures padding doesn't increase width */
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8">
+    <div class="container mx-auto bg-white rounded-lg shadow-xl p-6 mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Relação de Colaboradores - Julho 2025</h1>
+
+        <!-- Dashboard Section -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="dashboard-card">
+                <h3>Total de Colaboradores</h3>
+                <p id="total-collaborators">0</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Colaboradores Efetivados</h3>
+                <p id="effective-collaborators">0</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Colaboradores em Experiência</h3>
+                <p id="experience-collaborators">0</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Taxa de Turnover</h3>
+                <p id="turnover-rate">0%</p>
+            </div>
+        </div>
+
+        <!-- Search Bar and Add Button -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <input type="text" id="search-input" placeholder="Buscar por nome, função, situação..." class="w-full sm:w-2/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button id="add-collaborator-btn" class="w-full sm:w-1/3 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">Adicionar Colaborador</button>
+        </div>
+
+        <!-- Upcoming Dates Section -->
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Próximas Datas Importantes (Próximos 30 dias)</h2>
+            <div id="upcoming-dates" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <p class="text-gray-500 text-center col-span-full" id="no-upcoming-dates">Nenhuma data importante nos próximos 30 dias.</p>
+            </div>
+        </div>
+
+        <!-- Collaborators Table -->
+        <div class="overflow-x-auto rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider rounded-tl-lg">Nome Colaborador</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Participação em projetos</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">MATRICULA</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Situação</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">DATA DE DESLIGAMENTO</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">PREMIAÇÃO</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Função</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Turno</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Admissão</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 20º dia</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 45º dia</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">60 DIAS</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 70º dia</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">90 dias</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">FÉRIAS PROGRAMADAS</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Contato</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">empresa</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">gestor</th>
+                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider rounded-tr-lg">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <!-- Os dados do CSV serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirmar Exclusão</h3>
+            <p class="text-gray-700">Tem certeza de que deseja excluir este colaborador?</p>
+            <div class="modal-buttons">
+                <button class="cancel" onclick="hideConfirmationModal()">Cancelar</button>
+                <button class="confirm" onclick="confirmDeletion()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Adicionar Colaborador -->
+    <div id="add-collaborator-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Adicionar Novo Colaborador</h3>
+            <form id="add-collaborator-form" class="form-grid">
+                <div class="form-group">
+                    <label for="new-nome">Nome Colaborador</label>
+                    <input type="text" id="new-nome" name="Nome Colaborador">
+                </div>
+                <div class="form-group">
+                    <label for="new-projetos">Participação em projetos</label>
+                    <input type="text" id="new-projetos" name="Participação em projetos">
+                </div>
+                <div class="form-group">
+                    <label for="new-matricula">MATRICULA</label>
+                    <input type="text" id="new-matricula" name="MATRICULA">
+                </div>
+                <div class="form-group">
+                    <label for="new-situacao">Situação</label>
+                    <select id="new-situacao" name="Situação">
+                        <option value="EFETIVADO">EFETIVADO</option>
+                        <option value="EXPERIENCIA">EXPERIENCIA</option>
+                        <option value="DESLIGADO">DESLIGADO</option>
+                        <option value="AFASTADO">AFASTADO</option>
+                        <option value="FÉRIAS">FÉRIAS</option>
+                        <option value="APRENDIZ">APRENDIZ</option>
+                        <option value="DESLIGAMENTO SOLICITADO">DESLIGAMENTO SOLICITADO</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-data-desligamento">DATA DE DESLIGAMENTO</label>
+                    <input type="date" id="new-data-desligamento" name="DATA DE DESLIGAMENTO">
+                </div>
+                <div class="form-group">
+                    <label for="new-premiacao">PREMIAÇÃO</label>
+                    <input type="text" id="new-premiacao" name="PREMIAÇÃO">
+                </div>
+                <div class="form-group">
+                    <label for="new-funcao">Função</label>
+                    <input type="text" id="new-funcao" name="Função ">
+                </div>
+                <div class="form-group">
+                    <label for="new-turno">Turno</label>
+                    <input type="text" id="new-turno" name="Turno">
+                </div>
+                <div class="form-group">
+                    <label for="new-admissao">Admissão</label>
+                    <input type="date" id="new-admissao" name="Admissão">
+                </div>
+                <div class="form-group">
+                    <label for="new-feedback20">Feedback 20º dia</label>
+                    <input type="date" id="new-feedback20" name="Feedback 20º dia">
+                </div>
+                <div class="form-group">
+                    <label for="new-feedback45">Feedback 45º dia</label>
+                    <input type="date" id="new-feedback45" name="Feedback 45º dia">
+                </div>
+                <div class="form-group">
+                    <label for="new-60dias">60 DIAS</label>
+                    <input type="date" id="new-60dias" name="60 DIAS ">
+                </div>
+                <div class="form-group">
+                    <label for="new-feedback70">Feedback 70º dia</label>
+                    <input type="date" id="new-feedback70" name="Feedback 70º dia">
+                </div>
+                <div class="form-group">
+                    <label for="new-90dias">90 dias</label>
+                    <input type="date" id="new-90dias" name="90 dias">
+                </div>
+                <div class="form-group">
+                    <label for="new-ferias">FÉRIAS PROGRAMADAS</label>
+                    <input type="date" id="new-ferias" name="FÉRIAS PROGRAMADAS">
+                </div>
+                <div class="form-group">
+                    <label for="new-contato">Contato</label>
+                    <input type="text" id="new-contato" name="Contato ">
+                </div>
+                <div class="form-group">
+                    <label for="new-empresa">empresa</label>
+                    <input type="text" id="new-empresa" name="empresa">
+                </div>
+                <div class="form-group">
+                    <label for="new-gestor">gestor</label>
+                    <input type="text" id="new-gestor" name="gestor">
+                </div>
+            </form>
+            <div class="modal-buttons">
+                <button class="cancel" onclick="hideAddCollaboratorModal()">Cancelar</button>
+                <button class="save" onclick="addNewCollaborator()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados CSV embutidos diretamente no JavaScript
+        const csvData = `Nome Colaborador,Participação em projetos,MATRICULA,Situação,DATA DE DESLIGAMENTO,PREMIAÇÃO,Função ,Turno,Admissão,Feedback 20º dia,Feedback 45º dia,60 DIAS ,Feedback 70º dia,90 dias,FÉRIAS PROGRAMADAS,Contato ,empresa,gestor
+ADEMIR RODRIGUES DE LARA,,,EFETIVADO,,,Motorista ,VESPERTINO,,1900-01-20,1900-02-13,1900-02-28,1900-03-10,1900-03-29,,,Ponta Service,Magno Wenglarek
+ADILSON RUTTES,,,EXPERIENCIA,,,Coordenador de Logistica,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Orlei Hartamann
+ADRIANO ALVES DE ALMEIDA,BRIGADA,518,EFETIVADO,,,Coordenador de Logistica,MATUTINO,2024-08-12,2024-09-01,2024-09-25,2024-10-10,2024-10-21,2024-11-09,,,Ponta Service,Flavio Gobbo
+ADRIANO NEVES RODRIGUES,BRIGADA,,EFETIVADO,,,Operador de Empilhadeira,VESPERTINO,2024-10-29,2024-11-18,2024-12-12,2024-12-27,2025-01-07,2025-01-26,,,JH,Anderson de Paula Camargo
+ADRYAN DE ALMEIDA SOARES,,688,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-03-28,2025-04-17,2025-05-11,2025-05-26,2025-06-06,2025-06-25,,,Ponta Service,Jefferson Lemes Pereira
+MATHEUS PATRICK DOS SANTOS,,,DESLIGADO,2025-06-24,,Auxiliar geral ,,2025-06-16,2025-07-06,2025-07-30,2025-08-14,2025-08-25,2025-09-13,,,JH,Viviane Dantas
+AGEU RAMOS DOS SANTOS,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-03-14,2025-04-03,2025-04-27,2025-05-12,2025-05-23,2025-06-11,,,HENNEBERG e SILVA,Magno Wenglarek
+ALAIN GERONIMO AVILES BLOIS,,,EXPERIENCIA,,,Auxiliar geral,DIURNO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Cleyton Luiz Ramos
+ALEX GONÇALVES MEIRA,,,EFETIVADO,,,CONFERENTE,DIURNO,2022-05-16,2022-06-05,2022-06-29,2022-07-14,2022-07-25,2022-08-13,,,JEO,Adriano Alves de Almeida
+ALEX GUILHERME DE LIMA RAMOS,,,EXPERIENCIA,,,Auxiliar geral,MATUTINO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Adriano Alves de Almeida
+ALEXANDRE DE CAMPOS MADUREIRA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2025-03-14,2025-04-03,2025-04-27,2025-05-12,2025-05-23,2025-06-11,,,JH,Adriano Alves de Almeida
+ALEXANDRE DOS SANTOS PCZEIURSKA,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-10-15,2024-11-04,2024-11-28,2024-12-13,2024-12-24,2025-01-12,,,JH,Zaqueu Rocha Tebinca
+ALISSON GUILHERME ANGIESKI,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Anderson de Paula Camargo
+ALISSON LUIS FERCZYNSKI,,640,EFETIVADO,,,Treinee,DIURNO,2025-01-23,2025-02-12,2025-03-08,2025-03-23,2025-04-03,2025-04-22,,,Ponta Service,Magno Wenglarek
+ROSSANO KLOSTER FELISBINO,,125,DESLIGADO,,,Conferente Pl,DIURNO,2010-02-11,2010-03-03,2010-03-27,2010-04-11,2010-04-22,2010-05-11,,,Ponta Service,Cleyton Luiz Ramos
+ALLAN BRENO FOGAÇA RAMOS,,733,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-27,2025-06-16,2025-07-10,2025-07-25,2025-08-05,2025-08-24,,,Ponta Service,Jean Mauricio Tarades 
+JASI DE PINA,,101,DESLIGADO,2025-05-02,,Operador de empilhadeira,NOTURNO,2011-09-05,2011-09-25,2011-10-19,2011-11-03,2011-11-14,2011-12-03,,,Ponta Service,Zaqueu Rocha Tebinca
+ALLAN GLEISON ALBACH,5S,,EFETIVADO,,,Analista E-commerce,DIURNO,,1900-01-20,1900-02-13,1900-02-28,1900-03-10,1900-03-29,,,MM,Gilmar Rocha
+ALYSSON DO NASCIMENTO LESTSCHUKI,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2022-03-07,2022-03-27,2022-04-20,2022-05-05,2022-05-16,2022-06-04,,,JEO,Adriano Alves de Almeida
+AMANDA,,,EFETIVADO,,,Auxiliar Administrativo,DIURNO,,1900-01-20,1900-02-13,1900-02-28,1900-03-10,1900-03-29,,,MM,Gilmar Rocha
+AMON PAULUK,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2024-09-18,2024-10-08,2024-11-01,2024-11-16,2024-11-27,2024-12-16,,,JH,Magno Wenglarek
+ANDERSON APARECIDO TOMAZ DA SILVA,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-01-25,2025-02-14,2025-03-10,2025-03-25,2025-04-05,2025-04-24,,,JH,Jefferson Lemes Pereira
+ANDERSON DAVI FERNANDES DE SOUZA,,,EFETIVADO,,,Conferente,VESPERTINO,2024-05-07,2024-05-27,2024-06-20,2024-07-05,2024-07-16,2024-08-04,,,JEO,Anderson de Paula Camargo
+PAULO MICHAEL BARBOSA,,,AFASTADO,,,Operador de Empilhadeira,VESPERTINO,2016-08-01,2016-08-21,2016-09-14,2016-09-29,2016-10-10,2016-10-29,,,JEO,Anderson de Paula Camargo
+ANDERSON GOMES DE ANDRADE,,639,EFETIVADO,,,CONFERENTE,DIURNO,2025-01-23,2025-02-12,2025-03-08,2025-03-23,2025-04-03,2025-04-22,,,Ponta Service,Jefferson Lemes Pereira
+ANDERSON LUIZ FERREIRA,,271,EFETIVADO,,,Operador de Empilhadeira,NOTURNO,2021-09-01,2021-09-21,2021-10-15,2021-10-30,2021-11-10,2021-11-29,,,Ponta Service,Zaqueu Rocha Tebinca
+ANDERSON PAULA CAMARGO,,505,EFETIVADO,,,Coordenador de Logistica,VESPERTINO,2024-07-11,2024-07-31,2024-08-24,2024-09-08,2024-09-19,2024-10-08,,,Ponta Service,Flavio Gobbo
+ANDERSON TRANCOSO DOS SANTOS,5S,,EFETIVADO,,,CONFERENTE,DIURNO,2024-01-25,2024-02-14,2024-03-09,2024-03-24,2024-04-04,2024-04-23,,,JH,Jefferson Lemes Pereira
+ANDRE CAETANO COSTA,,627,EFETIVADO,,,AJ DE ASSITÊNCIA,DIURNO,2024-12-19,2025-01-08,2025-02-01,2025-02-16,2025-02-27,2025-03-18,,,Ponta Service,Cleyton Luiz Ramos
+ANDRE LUIS MOBILIS,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,JH,Viviane Dantas
+ANDRE WILSON COSME,,,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2024-06-29,2024-07-19,2024-08-12,2024-08-27,2024-09-07,2024-09-26,,,JH,Jefferson Lemes Pereira
+ANDREY SABINO PINTO DA SILVA,,,EFETIVADO,,,CONFERENTE,MATUTINO,2024-04-09,2024-04-29,2024-05-23,2024-06-07,2024-06-18,2024-07-07,,,JEO,Cleyton Luiz Ramos
+ANTONIO GABRIEL RIBEIRO CROVADOR,,409,EFETIVADO,,,Operador de Empilhadeira,NOTURNO,2023-06-16,2023-07-06,2023-07-30,2023-08-14,2023-08-25,2023-09-13,,,Ponta Service,Zaqueu Rocha Tebinca
+ANTONIO OKIPNY,,,EFETIVADO,,,CONFERENTE,MATUTINO,2013-09-11,2013-10-01,2013-10-25,2013-11-09,2013-11-20,2013-12-09,,,JEO ,Viviane Dantas
+ARIELE KREMER DE ASSIS,,,EFETIVADO,,,AJ DE ASSITÊNCIA,DIURNO,2024-02-06,2024-02-26,2024-03-21,2024-04-05,2024-04-16,2024-05-05,,,Ponta Service,Cleyton Luiz Ramos
+ARIELTON BRUNO BARBOSA TEIXEIRA,,285,EFETIVADO,,,Auxiliar de estoque,DIURNO,2024-10-18,2024-11-07,2024-12-01,2024-12-16,2024-12-27,2025-01-15,,,Ponta Service,Magno Wenglarek
+AUDIO BODNAR,,90,EFETIVADO,,,Conferente Pl,DIURNO,2004-11-05,2004-11-25,2004-12-19,2005-01-03,2005-01-14,2005-02-02,,,Ponta Service,Jean Mauricio Tarades 
+BERNARD ANTUNES DE AZAMBUJA,,482,EFETIVADO,,,Auxiliar Administrativo,VESPERTINO,2024-06-17,2024-07-07,2024-07-31,2024-08-15,2024-08-26,2024-09-14,,,Ponta Service,Paulo Freitas
+BIANCA PEDROSO MACHADO,5S,,EFETIVADO,,,ASSITÊNTE 1 ,DIURNO,2022-02-14,2022-03-06,2022-03-30,2022-04-14,2022-04-25,2022-05-14,,,Ponta Service,Cleyton Luiz Ramos
+BRIAN RENAN PCZEPIURSKA DOS SANTOS,BRIGADA,383,EFETIVADO,,,Auxiliar geral - Separador cetec,NOTURNO,2023-03-23,2023-04-12,2023-05-06,2023-05-21,2023-06-01,2023-06-20,,,Ponta Service,Zaqueu Rocha Tebinca
+BRUNO FELIPE FAGUNDES,,,EXPERIENCIA,,,Auxiliar geral ,VESPERTINO,2025-06-10,2025-06-30,2025-07-24,2025-08-08,2025-08-19,2025-09-07,,,JH,Anderson de Paula Camargo
+BRUNO MARINO KOVALTCHUK,,91,EFETIVADO,,,Operador de Empilhadeira Jr,NOTURNO,2013-11-20,2013-12-10,2014-01-03,2014-01-18,2014-01-29,2014-02-17,,,Ponta Service,Zaqueu Rocha Tebinca
+BRUNO ROBERTO PIDPALA MAYER,,198,EFETIVADO,,,Analista de Log. E-Commerce II,DIURNO,2020-09-09,2020-09-29,2020-10-23,2020-11-07,2020-11-18,2020-12-07,,,Ponta Service,Gilmar Rocha
+BRUNO VINICIUS DOS SANTOS GOES,,410,EFETIVADO,,,Operadora de Empilhadeira,NOTURNO,2023-06-20,2023-07-10,2023-08-03,2023-08-18,2023-08-29,2023-09-17,,,Ponta Service,Zaqueu Rocha Tebinca
+CARLOS EDUARDO STREMEL,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Cleyton Luiz Ramos
+CARLOS EDUARDO WERNER,,451,EFETIVADO,,,Motorista ,DIURNO,2024-01-24,2024-02-13,2024-03-08,2024-03-23,2024-04-03,2024-04-22,,,Ponta Service,Cleyton Luiz Ramos
+CLAITON SALES,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2021-10-07,2021-10-27,2021-11-20,2021-12-05,2021-12-16,2022-01-04,,,JEO,Adriano Alves de Almeida
+CLAUDEMIR LUIZ ALVES,,,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-05-18,2024-06-07,2024-07-01,2024-07-16,2024-07-27,2024-08-15,,,HENNEBERG e SILVA,Zaqueu Rocha Tebinca
+CLEVERSON ANTONIO BARBOSA,,,EFETIVADO,,,CONFERENTE,MATUTINO,2023-10-19,2023-11-08,2023-12-02,2023-12-17,2023-12-28,2024-01-16,,,JEO,Adriano Alves de Almeida
+CLEVERSON DE JESUS FERREIRA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2023-12-20,2024-01-09,2024-02-02,2024-02-17,2024-02-28,2024-03-18,,,JH,Jefferson Lemes Pereira
+DANIEL CASTILHO,,576,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-10-14,2024-11-03,2024-11-27,2024-12-12,2024-12-23,2025-01-11,,,Ponta Service,Viviane Dantas
+DANIEL DE ABREU CAMARGO,,,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-11-08,2024-11-28,2024-12-22,2025-01-06,2025-01-17,2025-02-05,,,JH,Zaqueu Rocha Tebinca
+MATHEUS HENRIQUE CHEVREUIL,,,DESLIGADO,2025-07-04,,Aux Logistica E-commerce,DIURNO,2022-04-14,2022-05-04,2022-05-28,2022-06-12,2022-06-23,2022-07-12,,,Ponta Service,Gilmar Rocha
+DANIEL FELIPE SOTO FERREIRA,,691,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2025-04-14,2025-05-04,2025-05-28,2025-06-12,2025-06-23,2025-07-12,,,Ponta Service,Zaqueu Rocha Tebinca
+EDUARDO PEREIRA DA SILVA,,328,DESLIGADO,2025-05-27,,Auxiliar geral ,DIURNO,2022-05-23,2022-06-12,2022-07-06,2022-07-21,2022-08-01,2022-08-20,,,Ponta Service,Rian Marinho
+DANIELLE MELLER FILIPOWSKI,5S / LEAN / ,515,EFETIVADO,,,Coordenador Adm Logística,DIURNO,2024-08-05,2024-08-25,2024-09-18,2024-10-03,2024-10-14,2024-11-02,,,Ponta Service,Flavio Gobbo
+DAVISON ALEXANDRE SOLARO,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2025-04-04,2025-04-24,2025-05-18,2025-06-02,2025-06-13,2025-07-02,,,JH,Zaqueu Rocha Tebinca
+DEBORAH KALINE DA SILVA,5S,,EFETIVADO,,,Assistente de logistica,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Danielle Meller
+DIEGO DE OLIVEIRA LOURENÇO,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-21,2025-06-10,2025-07-04,2025-07-19,2025-07-30,2025-08-18,,,Ponta Service,Jefferson Lemes Pereira
+MAXIMILIAN CHIBINSKI,,368,DESLIGADO,2025-06-06,,Assist. Logistica,VESPERTINO,2023-01-18,2023-02-07,2023-03-03,2023-03-18,2023-03-29,2023-04-17,,,Ponta Service,Anderson de Paula Camargo
+DIEGO SILVERIO FERNANDES,,,EXPERIENCIA,,,Auxiliar geral,VESPERTINO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Anderson de Paula Camargo
+DUDLER FERNANDO BETIM PEREIRA,,,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2024-08-15,2024-09-04,2024-09-28,2024-10-13,2024-10-24,2024-11-12,,,JH,Magno Wenglarek
+EDER MACAULIN FELIPAKE,,,EFETIVADO,,,CONFERENTE,DIURNO,2021-09-02,2021-09-22,2021-10-16,2021-10-31,2021-11-11,2021-11-30,,,JEO,OSIEL CHIBILINSKI
+EDINAN GONSALVES DE DEUS,LEAN,675,EFETIVADO,,,Auxiliar de estoque,DIURNO,2025-03-11,2025-03-31,2025-04-24,2025-05-09,2025-05-20,2025-06-08,,,Ponta Service,OSIEL CHIBILINSKI
+EDIRLAN CUSTODIO DE ASSIS,BRIGADA,174,EFETIVADO,,,Operador de Empilhadeira,MATUTINO,2019-10-14,2019-11-03,2019-11-27,2019-12-12,2019-12-23,2020-01-11,,,Ponta Service,Adriano Alves de Almeida
+EDUARDO FERNANDES,,684,EXPERIENCIA,,,Estoquista,DIURNO,2025-03-27,2025-04-16,2025-05-10,2025-05-25,2025-06-05,2025-06-24,,,Ponta Service,OSIEL CHIBILINSKI
+EDUARDO LINEU DINIZ,,,EFETIVADO,,,CONFERENTE,DIURNO,2024-01-10,2024-01-30,2024-02-23,2024-03-09,2024-03-20,2024-04-08,,,JH,Jefferson Lemes Pereira
+ELEIO ALVES DA SILVA,,594,DESLIGADO,2025-07-16,,CONFERENTE,MATUTINO,2024-10-28,2024-11-17,2024-12-11,2024-12-26,2025-01-06,2025-01-25,,,Ponta Service,Adriano Alves de Almeida
+ELIAS FELIPE DE LIMA CUNHA,,,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-05-07,2024-05-27,2024-06-20,2024-07-05,2024-07-16,2024-08-04,,,JH,Magno Wenglarek
+ELIEZER ANTUNES DE LARA,,,EXPERIENCIA,,,Auxiliar geral ,VESPERTINO,2025-06-10,2025-06-30,2025-07-24,2025-08-08,2025-08-19,2025-09-07,,,JH,Anderson de Paula Camargo
+ELVIS VANDERLEI MATIAK,,,EFETIVADO,,,Lider de Logistica,MATUTINO,2016-12-01,2016-12-21,2017-01-14,2017-01-29,2017-02-09,2017-02-28,,,JEO,Adriano Alves de Almeida
+EMANUEL FERREIRA BONETA,,496,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-07-01,2024-07-21,2024-08-14,2024-08-29,2024-09-09,2024-09-28,,,Ponta Service,Jean Mauricio Tarades 
+EMERSON DE OLIVEIRA NASCIMENTO,,,EFETIVADO,,,Operador de empilhadeira,MATUTINO,2025-02-24,2025-03-16,2025-04-09,2025-04-24,2025-05-05,2025-05-24,,,JEO,Adriano Alves de Almeida
+EMERSON LUAN MOREIRA DE PINA,,,EFETIVADO,,,CONFERENTE,VESPERTINO,2023-05-08,2023-05-28,2023-06-21,2023-07-06,2023-07-17,2023-08-05,,,JEO,Anderson de Paula Camargo
+ENDRYK FREITAS ANDRADE,,,EXPERIENCIA,,,Auxiliar geral ,VESPERTINO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Anderson de Paula Camargo
+JUAN PABLO CAMARGO DE OLIVEIRA,,435,DESLIGADO,2025-07-11,,Auxiliar geral ,NOTURNO,2023-12-05,2023-12-25,2024-01-18,2024-02-02,2024-02-13,2024-03-03,,,Ponta Service,Zaqueu Rocha Tebinca
+ERICK ANDRÉ MARINHO DA SILVA,,,EXPERIENCIA,,,Operador de empilhadeira,VESPERTINO,2025-06-03,2025-06-23,2025-07-17,2025-08-01,2025-08-12,2025-08-31,,,Ponta Service,Anderson de Paula Camargo
+ERICK DE SOUZA MAJOR,,,EFETIVADO,,,Operador de empilhadeira,VESPERTINO,2024-08-15,2024-09-04,2024-09-28,2024-10-13,2024-10-24,2024-11-12,,,JH,Anderson de Paula Camargo
+ERICK GORCHACOSKI GLOBESKI,,,EXPERIENCIA,,,Assistente de logistica,DIURNO,2025-06-10,2025-06-30,2025-07-24,2025-08-08,2025-08-19,2025-09-07,,,Ponta Service,Magno Wenglarek
+WILLIAN NATAN MATIAS DE LIMA,,,FÉRIAS,,,Auxiliar geral - Separador,NOTURNO,2024-01-03,2024-01-23,2024-02-16,2024-03-02,2024-03-13,2024-04-01,,,JH,Zaqueu Rocha Tebinca
+ERICKSON DE JESUS FERREIRA,,641,EFETIVADO,,,Auxiliar geral ,NOTURNO,2025-01-28,2025-02-17,2025-03-13,2025-03-28,2025-04-08,2025-04-27,,,Ponta Service,Zaqueu Rocha Tebinca
+EVERALDO DE ASSIS MACHADO SOARES,,,EXPERIENCIA,,,CONFERENTE,DIURNO,2025-03-14,2025-04-03,2025-04-27,2025-05-12,2025-05-23,2025-06-11,,,JH,Jefferson Lemes Pereira
+EVERSON LUIS DOS SANTOS,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-04-05,2025-04-25,2025-05-19,2025-06-03,2025-06-14,2025-07-03,,,JH,Jean Mauricio Tarades 
+EVERTON LUIZ DE OLIVEIRA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2023-11-01,2023-11-21,2023-12-15,2023-12-30,2024-01-10,2024-01-29,,,JEO,Adriano Alves de Almeida
+EWERTON ALVES MOREIRA,,,EXPERIENCIA,,,Auxiliar geral,VESPERTINO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Anderson de Paula Camargo
+FABIO RIBEIRO KOVBAI,LEAN,,EFETIVADO,,,Analista,DIURNO,2020-12-21,2021-01-10,2021-02-03,2021-02-18,2021-03-01,2021-03-20,,,MM,Cleyton Luiz Ramos
+FERNANDO ROLA,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-05-07,2024-05-27,2024-06-20,2024-07-05,2024-07-16,2024-08-04,,,JH,Zaqueu Rocha Tebinca
+FLAVIO DOS SANTOS MOURA,BRIGADA,,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-03-11,2024-03-31,2024-04-24,2024-05-09,2024-05-20,2024-06-08,,,JH,Cleyton Luiz Ramos
+FLAVIO RIBEIRO CHAGAS,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-01-03,2025-01-23,2025-02-16,2025-03-03,2025-03-14,2025-04-02,,,JH,Jefferson Lemes Pereira
+MAURI ANGELO MACEDO JUNIOR,,461,DESLIGADO,,,OP EMPILHADEIRA,DIURNO,2024-02-28,2024-03-19,2024-04-12,2024-04-27,2024-05-08,2024-05-27,,,Ponta Service,Cleyton Luiz Ramos
+GABRIEL ANTUNES FURQUIM DE JESUS,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2023-08-02,2023-08-22,2023-09-15,2023-09-30,2023-10-11,2023-10-30,,,JEO,Adriano Alves de Almeida
+GABRIEL CAMARGO DA SILVA,,,EXPERIENCIA,,,Auxiliar geral - Separador,NOTURNO,2025-05-09,2025-05-29,2025-06-22,2025-07-07,2025-07-18,2025-08-06,,,Ponta Service,Zaqueu Rocha Tebinca
+GABRIEL DE PAULA BERNARDO,,,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-10-25,2024-11-14,2024-12-08,2024-12-23,2025-01-03,2025-01-22,,,JH,Zaqueu Rocha Tebinca
+GABRIEL TEIXEIRA DE ASSIS,,,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-08-19,2024-09-08,2024-10-02,2024-10-17,2024-10-28,2024-11-16,,,JEO ,Viviane Dantas
+MAGNO FELIPE SIQUEIRA,,,DESLIGADO,2025-06-07,,Auxiliar geral ,DIURNO,2024-04-01,2024-04-21,2024-05-15,2024-05-30,2024-06-10,2024-06-29,,,JEO,Rian Marinho
+GELSON SERAFIM MARCONDES,,,EXPERIENCIA,,,Auxiliar geral ,VESPERTINO,2025-06-16,2025-07-06,2025-07-30,2025-08-14,2025-08-25,2025-09-13,,,JH,Anderson de Paula Camargo
+WALTER ALGACIR SANTINON,,471,DESLIGADO,2025-05-26,,Coordenador de Logistica,DIURNO,2024-04-19,2024-05-09,2024-06-02,2024-06-17,2024-06-28,2024-07-17,,,Ponta Service,Flavio Gobbo
+GEOVANY MAINARDES,BRIGADA / 5S,676,EFETIVADO,,,Auxiliar de estoque,DIURNO,2025-03-12,2025-04-01,2025-04-25,2025-05-10,2025-05-21,2025-06-09,,,Ponta Service,OSIEL CHIBILINSKI
+GIAN CARLOS DE OLIVEIRA,,,EFETIVADO,,,Conferente,VESPERTINO,2025-02-12,2025-03-04,2025-03-28,2025-04-12,2025-04-23,2025-05-12,,,JH,Anderson de Paula Camargo
+GILMAR DA SILVA ROCHA,LEAN,,EFETIVADO,,,Coordenador de Logistica,DIURNO,2021-05-03,2021-05-23,2021-06-16,2021-07-01,2021-07-12,2021-07-31,,,Ponta Service,Flavio Gobbo
+GIOVANI HENRIQUE DO NASCIMENTO,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-10,2025-06-30,2025-07-24,2025-08-08,2025-08-19,2025-09-07,,,JH,Jefferson Lemes Pereira
+GUILHERME DOS SANTOS PADILHA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2022-10-19,2022-11-08,2022-12-02,2022-12-17,2022-12-28,2023-01-16,,,JEO,Adriano Alves de Almeida
+GUILHERME SZYMONEK,,413,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2023-07-12,2023-08-01,2023-08-25,2023-09-09,2023-09-20,2023-10-09,,,Ponta Service,Zaqueu Rocha Tebinca
+GUSTAVO FERNANDES DE PAULA,,,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2025-01-09,2025-01-29,2025-02-22,2025-03-09,2025-03-20,2025-04-08,,,JH,Cleyton Luiz Ramos
+GUSTAVO IVACHUKA KOHLER,BRIGADA,653,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-02-07,2025-02-27,2025-03-23,2025-04-07,2025-04-18,2025-05-07,,,Ponta Service,Cleyton Luiz Ramos
+GUSTAVO SLOMPO DE ANDRADE,,165,EFETIVADO,,,Auxiliar geral ,DIURNO,2019-08-05,2019-08-25,2019-09-18,2019-10-03,2019-10-14,2019-11-02,,,Ponta Service,Magno Wenglarek
+HENRIQUE MANOEL RAMOS FERREIRA,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-02-12,2025-03-04,2025-03-28,2025-04-12,2025-04-23,2025-05-12,,,JH,Viviane Dantas
+IGOR TORRES TENORIO PEREIRA,,,EXPERIENCIA,,,Auxiliar geral,NOTURNO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Zaqueu Rocha Tebinca
+IGOR VINICIUS DE ANDRADE ANTUNES,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-23,2025-06-12,2025-07-06,2025-07-21,2025-08-01,2025-08-20,,,Ponta Service,Magno Wenglarek
+ISAIAS PORTELA FERREIRA,,,EXPERIENCIA,,,Auxiliar de estoque ,DIURNO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,,
+IVAN RODRIGO OLIVEIRA E SILVA,,,EFETIVADO,,,CONFERENTE,DIURNO,2024-08-01,2024-08-21,2024-09-14,2024-09-29,2024-10-10,2024-10-29,,,JH,Jefferson Lemes Pereira
+JACIEL FERNANDO DA SILVA,,,EFETIVADO,,,CONFERENTE,DIURNO,2024-06-06,2024-06-26,2024-07-20,2024-08-04,2024-08-15,2024-09-03,,,JH,Cleyton Luiz Ramos
+JACKSON GABRIEL DE LIMA ANDRADE ,,,EFETIVADO,,,CONFERENTE,VESPERTINO,2021-10-06,2021-10-26,2021-11-19,2021-12-04,2021-12-15,2022-01-03,,,JEO,Jefferson Lemes Pereira
+JACKSON MARRONE GARCIA,,280,EFETIVADO,,,Auxiliar geral ,DIURNO,2021-10-04,2021-10-24,2021-11-17,2021-12-02,2021-12-13,2022-01-01,,,Ponta Service,Magno Wenglarek
+JACKSON PINHEIRO DA COSTA JUNIOR,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-23,2025-06-12,2025-07-06,2025-07-21,2025-08-01,2025-08-20,,,Ponta Service,Magno Wenglarek
+JANDIR DA LUZ FRANCA,,355,EFETIVADO,,,Auxiliar geral ,NOTURNO,2022-11-23,2022-12-13,2023-01-06,2023-01-21,2023-02-01,2023-02-20,,,Ponta Service,Zaqueu Rocha Tebinca
+JASON FELIPE BUENO,BRIGADA,,EFETIVADO,,,Assistente de Logistica,NOTURNO,2024-08-15,2024-09-04,2024-09-28,2024-10-13,2024-10-24,2024-11-12,,,JH,Zaqueu Rocha Tebinca
+JEAN DA SILVA CARDOSO,BRIGADA,588,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-10-21,2024-11-10,2024-12-04,2024-12-19,2024-12-30,2025-01-18,,,Ponta Service,Viviane Dantas
+DOUGLAS MARIANO LACERDA,,520,APRENDIZ,,,Aprendiz,DIURNO,2024-08-12,2024-09-01,2024-09-25,2024-10-10,2024-10-21,2024-11-09,,,Ponta Service,Danielle Meller
+KAUA GOMES DOMINGUES,,519,APRENDIZ,,,Auxiliar geral ,DIURNO,2024-08-12,2024-09-01,2024-09-25,2024-10-10,2024-10-21,2024-11-09,,,Ponta Service,Danielle Meller
+OTAVIO JULYAN EVERT,,521,APRENDIZ,,,Auxiliar geral ,DIURNO,2024-08-12,2024-09-01,2024-09-25,2024-10-10,2024-10-21,2024-11-09,,,Ponta Service,Danielle Meller
+JEAN FABRICIO MARINS DE CARVALHO,,698,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,Ponta Service,Cleyton Luiz Ramos
+JEAN MAURICIO TARADES,LEAN,103,EFETIVADO,,,Líder de Logística,DIURNO,2013-11-25,2013-12-15,2014-01-08,2014-01-23,2014-02-03,2014-02-22,,,Ponta Service,Gilmar Rocha
+JEFERSON ALVES MAIA,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-29,2025-06-18,2025-07-12,2025-07-27,2025-08-07,2025-08-26,,,Ponta Service,Magno Wenglarek
+JEFERSON LUIZ DOS SANTOS ,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2021-08-02,2021-08-22,2021-09-15,2021-09-30,2021-10-11,2021-10-30,,,JEO,Adriano Alves de Almeida
+JEFFERSON ANTUNES MACHADO,BRIGADA,,EFETIVADO,,,Auxiliar geral ,DIURNO,2010-02-09,2010-03-01,2010-03-25,2010-04-09,2010-04-20,2010-05-09,,,MM,Magno Wenglarek
+JEFFERSON LEMES PEREIRA,,104,EFETIVADO,,,Conferente Jr,VESPERTINO,2013-08-01,2013-08-21,2013-09-14,2013-09-29,2013-10-10,2013-10-29,,,Ponta Service,Flavio Gobbo
+JERSON LUIZ DREONICK FILHO,,,EXPERIENCIA,,,Auxiliar de estoque,DIURNO,2025-05-13,2025-06-02,2025-06-26,2025-07-11,2025-07-22,2025-08-10,,,Ponta Service,OSIEL CHIBILINSKI
+JESSE EMERSON ANTUNES DE OLIVEIRA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2024-01-24,2024-02-13,2024-03-08,2024-03-23,2024-04-03,2024-04-22,,,JH,Adriano Alves de Almeida
+JOÃO GABRIEL MACIEL DE LIMA,,637,EFETIVADO,,,CONFERENTE,NOTURNO,2025-01-20,2025-02-09,2025-03-05,2025-03-20,2025-03-31,2025-04-19,,,Ponta Service,Viviane Dantas
+JOAO GUILHERME DOBGINSKI GOMES,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2025-01-28,2025-02-17,2025-03-13,2025-03-28,2025-04-08,2025-04-27,,,JH,Zaqueu Rocha Tebinca
+DOUGLAS SOARES PROENÇA,,,AFASTADO,,,Auxiliar geral ,NOTURNO,2024-09-04,2024-09-24,2024-10-18,2024-11-02,2024-11-13,2024-12-02,,,Ponta Service,Zaqueu Rocha Tebinca
+JOÃO MARCOS RAMOS,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-01-25,2025-02-14,2025-03-10,2025-03-25,2025-04-05,2025-04-24,,,JH,Jefferson Lemes Pereira
+JOAO PEDRO DE ARAUJO LOPES,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-09-02,2024-09-22,2024-10-16,2024-10-31,2024-11-11,2024-11-30,,,JH,Jefferson Lemes Pereira
+JOAO VICTOR MOTTIN DE OLIVEIRA,,,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-09-02,2024-09-22,2024-10-16,2024-10-31,2024-11-11,2024-11-30,,,JH,Zaqueu Rocha Tebinca
+JOCENEI PORFIRIO DINIZ,,616,EFETIVADO,,,Motorista ,DIURNO,2021-07-19,2021-08-08,2021-09-01,2021-09-16,2021-09-27,2021-10-16,,,Ponta Service,Magno Wenglarek
+JOELMA MOREIRA GONÇALVES,,,EFETIVADO,,,ASSISTÊNTE 3,DIURNO,2011-10-10,2011-10-30,2011-11-23,2011-12-08,2011-12-19,2012-01-07,,,Ponta Service,Cleyton Luiz Ramos
+MATHEUS FELIPE RODRIGUES,,,DESLIGADO,2025-04-14,,Auxiliar geral ,DIURNO,2024-09-26,2024-10-16,2024-11-09,2024-11-24,2024-12-05,2024-12-24,,,Ponta Service,Jefferson Lemes Pereira
+JONATHAN LUIS OLIVEIRA GALVÃO ,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2021-07-19,2021-08-08,2021-09-01,2021-09-16,2021-09-27,2021-10-16,,,Ponta Service,Magno Wenglarek
+ROBSON LUIZ MARCHINSKI,,,DESLIGADO,2025-05-14,,AJ DE ASSITÊNCIA,DIURNO,2024-10-02,2024-10-22,2024-11-15,2024-11-30,2024-12-11,2024-12-30,,,JH,Cleyton Luiz Ramos
+JORGE CARLOS MUNHOZ,LEAN,,EFETIVADO,,,Gestor de Estrutura,DIURNO,,1900-01-20,1900-02-13,1900-02-28,1900-03-10,1900-03-29,,,MM,Antonio Marcos Vaz
+FLAVIA VITÓRIA DE PAULA NEVES,,569,APRENDIZ,,,Aprendiz,DIURNO,2024-10-07,2024-10-27,2024-11-20,2024-12-05,2024-12-16,2025-01-04,,,Ponta Service,Danielle Meller
+JORGE NATHANAEL THIAGO DA SILVEIRA,,677,EFETIVADO,,,Auxiliar de estoque,DIURNO,2025-03-13,2025-04-02,2025-04-26,2025-05-11,2025-05-22,2025-06-10,,,Ponta Service,OSIEL CHIBILINSKI
+MATHEUS BATISTEL FERREIRA,,,AFASTADO,,,Auxiliar geral ,NOTURNO,2024-10-09,2024-10-29,2024-11-22,2024-12-07,2024-12-18,2025-01-06,,,Ponta Service,Zaqueu Rocha Tebinca
+JOSAFÁ GABRIEL LIMA DE JESUS,BRIGADA,,DESLIGADO,2025-07-17,,Auxiliar geral ,MATUTINO,2024-08-28,2024-09-17,2024-10-11,2024-10-26,2024-11-06,2024-11-25,,,JEO,Adriano Alves de Almeida
+JOSÉ ELI FERREIRA,,,EFETIVADO,,,Auxiliar geral ,MATUTINO,2021-09-16,2021-10-06,2021-10-30,2021-11-14,2021-11-25,2021-12-14,,,JEO,Adriano Alves de Almeida
+JOSE LEO DINIZ LOPES JUNIOR,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-03-09,2024-03-29,2024-04-22,2024-05-07,2024-05-18,2024-06-06,,,JH,Jefferson Lemes Pereira
+JOSE LUIZ MARCOS,,623,EFETIVADO,,,Assistente de Logística  Jr,DIURNO,2024-12-02,2024-12-22,2025-01-15,2025-01-30,2025-02-10,2025-03-01,,,Ponta Service,OSIEL CHIBILINSKI
+JOSÉ MATEUS DA SILVA,,529,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-08-27,2024-09-16,2024-10-10,2024-10-25,2024-11-05,2024-11-24,,,Ponta Service,Zaqueu Rocha Tebinca
+JOELTON BARBOSA DE OLIVEIRA,,587,DESLIGADO,2025-05-07,,Auxiliar geral ,DIURNO,2024-10-18,2024-11-07,2024-12-01,2024-12-16,2024-12-27,2025-01-15,,,Ponta Service,Rian Marinho
+CAUA LEAL LIMA,,,DESLIGADO,,,Auxiliar Administrativo,MATUTINO,2024-10-21,2024-11-10,2024-12-04,2024-12-19,2024-12-30,2025-01-18,,,JEO,Adriano Alves de Almeida
+JOSE SILVA FERREIRA NETO,,620,EFETIVADO,,,AJ DE ASSITÊNCIA,DIURNO,2024-11-28,2024-12-18,2025-01-11,2025-01-26,2025-02-06,2025-02-25,,,Ponta Service,Cleyton Luiz Ramos
+JOSENILTON APARECIDO DE SOUZA,,,EFETIVADO,,,CONFERENTE,MATUTINO,2023-10-26,2023-11-15,2023-12-09,2023-12-24,2024-01-04,2024-01-23,,,JEO,Adriano Alves de Almeida
+JUAN PABLO OROZCO GALLEGO,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,JH,Magno Wenglarek
+JUAREZ GONÇALVES,,,EFETIVADO,,,CONFERENTE,DIURNO,2019-11-21,2019-12-11,2020-01-04,2020-01-19,2020-01-30,2020-02-18,,,JK LOG,Jean Mauricio Tarades 
+JULIANO LEVANDOSKI MARCONDES,5S,,EFETIVADO,,,Assistente Administrativo,DIURNO,2024-01-19,2024-02-08,2024-03-03,2024-03-18,2024-03-29,2024-04-17,,,JH,Jean Mauricio Tarades 
+JULIO CESAR PEDROSO RIBAS,,,EXPERIENCIA,,,Auxiliar geral,DIURNO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Cleyton Luiz Ramos
+JULIO CESAR PEDROSO RIBAS ,,,EXPERIENCIA,,,Auxiliar geral ,,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Cleyton Luiz Ramos
+JUNIO CESAR DE OLIVEIRA LEIRIA,,,EXPERIENCIA,,,Auxiliar geral ,VESPERTINO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Anderson de Paula Camargo
+KAIKY DOS SANTOS RODRIGUES,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-07-03,2024-07-23,2024-08-16,2024-08-31,2024-09-11,2024-09-30,,,JH,Adriano Alves de Almeida
+FELIPE ALMEIDA DOS SANTOS ADRIANO,,609,DESLIGADO,2025-06-09,,Auxiliar geral ,MATUTINO,2024-11-11,2024-12-01,2024-12-25,2025-01-09,2025-01-20,2025-02-08,,,Ponta Service,Adriano Alves de Almeida
+KAINAN CRISTERSON DOS SANTOS ,,,EFETIVADO,,,Operador de Empilhadeira,NOTURNO,2024-05-07,2024-05-27,2024-06-20,2024-07-05,2024-07-16,2024-08-04,,,JH,Zaqueu Rocha Tebinca
+KALL DAVID SILVA IARENCHUK,,,DESLIGADO,2025-07-15,,Auxiliar geral - Separador,NOTURNO,2025-05-08,2025-05-28,2025-06-21,2025-07-06,2025-07-17,2025-08-05,,,Ponta Service,Zaqueu Rocha Tebinca
+KAREN CRISTINE MORAIS CORDEIRO,,659,EFETIVADO,,,AUX DE ASSTÊNCIA,DIURNO,2025-02-12,2025-03-04,2025-03-28,2025-04-12,2025-04-23,2025-05-12,,,Ponta Service,Cleyton Luiz Ramos
+KEWIN WILLIAN RIBEIRO DE CASTRO,,608,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-11-11,2024-12-01,2024-12-25,2025-01-09,2025-01-20,2025-02-08,,,Ponta Service,Jefferson Lemes Pereira
+LEANDRO JOSE VINICIUS PONTES,,114,EFETIVADO,,,Operador de Empilhadeira,VESPERTINO,2008-05-02,2008-05-22,2008-06-15,2008-06-30,2008-07-11,2008-07-30,,,Ponta Service,Anderson de Paula Camargo
+LEANDRO PINHEIRO DOS SANTOS,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Adriano Alves de Almeida
+LEONARDO DA ROSA OLIVEIRA SANTANA,,422,EFETIVADO,,,CONFERENTE,VESPERTINO,2023-08-25,2023-09-14,2023-10-08,2023-10-23,2023-11-03,2023-11-22,,,Ponta Service,Jefferson Lemes Pereira
+LEONARDO GONÇALVES CARDOSO,,,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2024-06-18,2024-07-08,2024-08-01,2024-08-16,2024-08-27,2024-09-15,,,JH,Anderson de Paula Camargo
+THIAGO BUENO DA SILVA,,630,DESLIGADO,2025-06-30,,Auxiliar geral ,DIURNO,2024-12-24,2025-01-13,2025-02-06,2025-02-21,2025-03-04,2025-03-23,,,Ponta Service,Jean Mauricio Tarades 
+LEOSIR LEMES LOPES,BRIGADA,555,EFETIVADO,,,Auxiliar geral ,NOTURNO,2024-09-25,2024-10-15,2024-11-08,2024-11-23,2024-12-04,2024-12-23,,,Ponta Service,Zaqueu Rocha Tebinca
+LUAN CESAR MARINHO DOS SANTOS,5S,186,EFETIVADO,,,Estoquista I,DIURNO,2020-02-24,2020-03-15,2020-04-08,2020-04-23,2020-05-04,2020-05-23,,,Ponta Service,OSIEL CHIBILINSKI
+LUAN CRISTIAN CARNEIRO NUNES ,,570,EFETIVADO,,,Auxiliar de Estoque,DIURNO,2024-10-08,2024-10-28,2024-11-21,2024-12-06,2024-12-17,2025-01-05,,,Ponta Service,Magno Wenglarek
+LUAN HENRIQUE RODRIGUES LOURENCO,,548,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,VESPERTINO,2024-09-18,2024-10-08,2024-11-01,2024-11-16,2024-11-27,2024-12-16,,,Ponta Service,Anderson de Paula Camargo
+LUCAS DE SOUZA LANHI,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2017-07-19,2017-08-08,2017-09-01,2017-09-16,2017-09-27,2017-10-16,,,JEO,Zaqueu Rocha Tebinca
+LUCAS DELABERNARDA,,685,EXPERIENCIA,,,Auxiliar de estoque,DIURNO,2025-03-27,2025-04-16,2025-05-10,2025-05-25,2025-06-05,2025-06-24,,,Ponta Service,OSIEL CHIBILINSKI
+LUCAS EDUARDO ANTUNES FERREIRA,,,EFETIVADO,,,Operador de empilhadeira,MATUTINO,2024-02-22,2024-03-13,2024-04-06,2024-04-21,2024-05-02,2024-05-21,,,JEO,Adriano Alves de Almeida
+LUCAS ELUTERIO DA LUZ,,701,EFETIVADO,,,Auxiliar de estoque,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,Ponta Service,OSIEL CHIBILINSKI
+LUCAS MIGUEL VAZ PINHEIRO,,492,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-06-25,2024-07-15,2024-08-08,2024-08-23,2024-09-03,2024-09-22,,,Ponta Service,OSIEL CHIBILINSKI
+LUCAS RUTELLA ,,,EFETIVADO,,,CONFERENTE,VESPERTINO,2024-05-24,2024-06-13,2024-07-07,2024-07-22,2024-08-02,2024-08-21,,,JEO,Viviane Dantas
+LUCIANO JUNIOR DE QUADROS GOMES,,660,EFETIVADO,,,Assistente Administrativo,,2025-02-13,2025-03-05,2025-03-29,2025-04-13,2025-04-24,2025-05-13,,,Ponta Service,Orlei Hartamann
+LUIDI LECHINSKI DE ANDRADE,,,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,NOTURNO,2024-01-15,2024-02-04,2024-02-28,2024-03-14,2024-03-25,2024-04-13,,,JH,Zaqueu Rocha Tebinca
+ELTON RENAN NEGOSEKI,,,DESLIGADO,2025-05-03,,Auxiliar geral ,VESPERTINO,2025-02-03,2025-02-23,2025-03-19,2025-04-03,2025-04-14,2025-05-03,,,JEO,Anderson de Paula Camargo
+LUIS FERNANDO DA SILVA SANTOS,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-11-13,2024-12-03,2024-12-27,2025-01-11,2025-01-22,2025-02-10,,,Ponta Service,Zaqueu Rocha Tebinca
+LUIS FERNANDO GOMES ANACLETO,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-07,2025-05-27,2025-06-20,2025-07-05,2025-07-16,2025-08-04,,,Ponta Service,Jefferson Lemes Pereira
+GUSTAVO DA SILVA RIBEIRO,,654,APRENDIZ,,,Aprendiz,DIURNO,2025-02-10,2025-03-02,2025-03-26,2025-04-10,2025-04-21,2025-05-10,,,Ponta Service,Danielle Meller
+IGOR GUTOCK MARTINS ,,655,DESLIGADO,2025-07-21,,Aprendiz,DIURNO,2025-02-10,2025-03-02,2025-03-26,2025-04-10,2025-04-21,2025-05-10,,,Ponta Service,Danielle Meller
+LUCAS GABRIEL MESSIAS,,657,APRENDIZ,,,Aprendiz,DIURNO,2025-02-10,2025-03-02,2025-03-26,2025-04-10,2025-04-21,2025-05-10,,,Ponta Service,Danielle Meller
+LUCAS GABRIEL RODRIGUES,,652,APRENDIZ,,,Aprendiz,DIURNO,2025-02-10,2025-03-02,2025-03-26,2025-04-10,2025-04-21,2025-05-10,,,Ponta Service,Danielle Meller
+RAFAEL ZAPORA DE BARROS,,656,APRENDIZ,,,Aprendiz,DIURNO,2025-02-10,2025-03-02,2025-03-26,2025-04-10,2025-04-21,2025-05-10,,,Ponta Service,Danielle Meller
+LUIS FERNANDO LEMOS,,405,EFETIVADO,,,Assistente de Logistica,NOTURNO,2023-06-14,2023-07-04,2023-07-28,2023-08-12,2023-08-23,2023-09-11,,,Ponta Service,Zaqueu Rocha Tebinca
+LUIZ CARLOS CUNHA,,375,EFETIVADO,,,Auxiliar geral ,DIURNO,2023-02-06,2023-02-26,2023-03-22,2023-04-06,2023-04-17,2023-05-06,,,Ponta Service,Jean Mauricio Tarades 
+JOSE ROBERTO RIBEIRO,,,DESLIGADO,2025-05-16,,Auxiliar geral ,DIURNO,2025-02-12,2025-03-04,2025-03-28,2025-04-12,2025-04-23,2025-05-12,,,JH,Jefferson Lemes Pereira
+LUIZ CARLOS GAVRONSKI,,191,EFETIVADO,,,Operador de Empilhadeira,NOTURNO,2003-10-08,2003-10-28,2003-11-21,2003-12-06,2003-12-17,2004-01-05,,,Ponta Service,Zaqueu Rocha Tebinca
+LUIZ EDUARDO FARIA RIBEIRO NEVES,,703,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-06,2025-05-26,2025-06-19,2025-07-04,2025-07-15,2025-08-03,,,Ponta Service,Jean Mauricio Tarades 
+MURILO DE MATTOS FERNANDES,,662,DESLIGADO,2025-05-14,,Auxiliar geral ,DIURNO,2025-02-14,2025-03-06,2025-03-30,2025-04-14,2025-04-25,2025-05-14,,,Ponta Service,Rian Marinho
+LUIZ GUSTAVO DE SOUZA LIMA,,528,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-08-23,2024-09-12,2024-10-06,2024-10-21,2024-11-01,2024-11-20,,,Ponta Service,Zaqueu Rocha Tebinca
+CLAUDENIR TRINDADE,,,DESLIGADO,2025-05-19,,Auxiliar geral ,MATUTINO,2025-02-19,2025-03-11,2025-04-04,2025-04-19,2025-04-30,2025-05-19,,,JH,Adriano Alves de Almeida
+JAIR SALAMUCHA,,666,DESLIGADO,2025-05-20,,Auxiliar geral ,MATUTINO,2025-02-20,2025-03-12,2025-04-05,2025-04-20,2025-05-01,2025-05-20,,,Ponta Service,Adriano Alves de Almeida
+LUIZ HENRIQUE DE OLIVEIRA,,,EXPERIENCIA,,,Auxiliar geral ,,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Anderson de Paula Camargo
+LUIZ RICARDO RAUCH,,,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-09-09,2024-09-29,2024-10-23,2024-11-07,2024-11-18,2024-12-07,,,JH,Jean Mauricio Tarades 
+LUAN FERREIRA RODRIGUES DE GODOIS,,,DESLIGADO,2025-05-12,,Auxiliar geral ,DIURNO,2025-03-05,2025-03-25,2025-04-18,2025-05-03,2025-05-14,2025-06-02,,,JH,Jefferson Lemes Pereira
+ARIADINE DOS SANTOS MATIAS KRUGER,,,DESLIGADO,2025-06-09,,AJ DE ASSITÊNCIA,DIURNO,2025-03-07,2025-03-27,2025-04-20,2025-05-05,2025-05-16,2025-06-04,,,Ponta Service,Cleyton Luiz Ramos
+CARLA BUDNE,,670,DESLIGADO,2025-06-04,,Operadora de Empilhadeira,MATUTINO,2025-03-07,2025-03-27,2025-04-20,2025-05-05,2025-05-16,2025-06-04,,,Ponta Service,Adriano Alves de Almeida
+KARINE ALVES MONTEIRO,,671,DESLIGADO,2025-05-20,,Auxiliar de estoque,DIURNO,2025-03-07,2025-03-27,2025-04-20,2025-05-05,2025-05-16,2025-06-04,,,Ponta Service,Magno Wenglarek
+MAGNO ALOYSIO WENGLAREK,LEAN,7461,EFETIVADO,,,Coordenador de Logistica,DIURNO,2011-03-02,2011-03-22,2011-04-15,2011-04-30,2011-05-11,2011-05-30,,,Ponta Service,Flavio Gobbo
+MARCIO BATISTA DO PRADO,,,EXPERIENCIA,,,Auxiliar geral ,MATUTINO,2025-05-07,2025-05-27,2025-06-20,2025-07-05,2025-07-16,2025-08-04,,,Ponta Service,Adriano Alves de Almeida
+MARCOS JANSEN JUNIOR,,,EFETIVADO,,,Auxiliar geral - Separador,DIURNO,2025-01-09,2025-01-29,2025-02-22,2025-03-09,2025-03-20,2025-04-08,,,JH,Zaqueu Rocha Tebinca
+MARCOS JUNIOR FERREIRA GONCALVES DA ROCH,,601,DESLIGADO,,,Auxiliar geral ,DIURNO,2024-11-01,2024-11-21,2024-12-15,2024-12-30,2025-01-10,2025-01-29,,,Ponta Service,Jefferson Lemes Pereira
+MARCOS VINICIUS RIBEIRO,,665,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-02-18,2025-03-10,2025-04-03,2025-04-18,2025-04-29,2025-05-18,,,Ponta Service,Jefferson Lemes Pereira
+MARCOS WLODARSKI ,,120,EFETIVADO,,,CONFERENTE,MATUTINO,2003-02-14,2003-03-06,2003-03-30,2003-04-14,2003-04-25,2003-05-14,,,Ponta Service,Adriano Alves de Almeida
+MASTERSON WILLIAM TEZOTO,,573,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-10-11,2024-10-31,2024-11-24,2024-12-09,2024-12-20,2025-01-08,,,Ponta Service,Viviane Dantas
+LEONARDO MENDES DE LIMA LEMES,,,DESLIGADO,2025-06-11,,Auxiliar geral ,DIURNO,2025-03-14,2025-04-03,2025-04-27,2025-05-12,2025-05-23,2025-06-11,,,JH,Jefferson Lemes Pereira
+MAICON BATISTA DOS SANTOS,,679,DESLIGADO,2025-06-17,,Auxiliar geral ,MATUTINO,2025-03-19,2025-04-08,2025-05-02,2025-05-17,2025-05-28,2025-06-16,,,Ponta Service,Adriano Alves de Almeida
+JOÃO VITOR RIBEIRO DOS SANTOS,,,DESLIGADO,2025-06-02,,Auxiliar geral ,VESPERTINO,2025-03-21,2025-04-10,2025-05-04,2025-05-19,2025-05-30,2025-06-18,,,Ponta Service,Anderson de Paula Camargo
+DERICKSON JOSUÉ MARTINS DA SILVA,,,DESLIGADO,2025-05-08,,Auxiliar geral ,DIURNO,2025-03-25,2025-04-14,2025-05-08,2025-05-23,2025-06-03,2025-06-22,,,JH,Jefferson Lemes Pereira
+WILLIAN CORREA CELESTRINO,,,DESLIGADO,2025-05-28,,Auxiliar geral ,VESPERTINO,2025-03-25,2025-04-14,2025-05-08,2025-05-23,2025-06-03,2025-06-22,,,Ponta Service,Anderson de Paula Camargo
+MICHEL NARISMAGI,,683,DESLIGADO,2025-05-09,,AJ DE ASSITÊNCIA,DIURNO,2025-03-26,2025-04-15,2025-05-09,2025-05-24,2025-06-04,2025-06-23,,,Ponta Service,Cleyton Luiz Ramos
+MATEUS DA SILVA MARQUES,,530,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-08-28,2024-09-17,2024-10-11,2024-10-26,2024-11-06,2024-11-25,,,Ponta Service,Zaqueu Rocha Tebinca
+MATEUS DE MATOS NESTOR,,562,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-10-01,2024-10-21,2024-11-14,2024-11-29,2024-12-10,2024-12-29,,,Ponta Service,Jefferson Lemes Pereira
+MATHEUS CLOCK ,,546,EFETIVADO,,,Auxiliar de E-commerce,DIURNO,2024-09-16,2024-10-06,2024-10-30,2024-11-14,2024-11-25,2024-12-14,,,Ponta Service,Gilmar Rocha
+MATHEUS GARCIA,BRIGADA / 5S,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-14,2025-06-03,2025-06-27,2025-07-12,2025-07-23,2025-08-11,,,Ponta Service,Magno Wenglarek
+KELVIN SIDINEI DE FREITAS DA ROSA,,687,DESLIGADO,2025-05-10,,Auxiliar geral ,DIURNO,2025-03-28,2025-04-17,2025-05-11,2025-05-26,2025-06-06,2025-06-25,,,Ponta Service,Jefferson Lemes Pereira
+BRUNO FELIPE FERREIRA MACHADO,,,DESLIGADO,2025-06-26,,Auxiliar geral ,VESPERTINO,2025-03-29,2025-04-18,2025-05-12,2025-05-27,2025-06-07,2025-06-26,,,JH,Anderson de Paula Camargo
+MAURICIO DIAS DE MORAES,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2024-01-10,2024-01-30,2024-02-23,2024-03-09,2024-03-20,2024-04-08,,,JH,Zaqueu Rocha Tebinca
+MAURICIO GUILHERME CAMARGO,BRIGADA,,EFETIVADO,,,Assistente de Logistica,DIURNO,2019-06-21,2019-07-11,2019-08-04,2019-08-19,2019-08-30,2019-09-18,,,JEO,Jefferson Lemes Pereira
+MICHAELL ESSER,,,EXPERIENCIA,,,Auxiliar geral - Separador,NOTURNO,2025-06-09,2025-06-29,2025-07-23,2025-08-07,2025-08-18,2025-09-06,,,JH,Zaqueu Rocha Tebinca
+MIGUEL WASELIK FERREIRA,,,EXPERIENCIA,,,Auxiliar geral - Separador,DIURNO,2025-06-09,2025-06-29,2025-07-23,2025-08-07,2025-08-18,2025-09-06,,,Ponta Service,Zaqueu Rocha Tebinca
+LEONARDO SIMÕES,,690,DESLIGADO,2025-06-12,,Auxiliar geral ,NOTURNO,2025-04-10,2025-04-30,2025-05-24,2025-06-08,2025-06-19,2025-07-08,,,Ponta Service,Zaqueu Rocha Tebinca
+MURILO TARNAWSKI BREULA,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-07,2025-05-27,2025-06-20,2025-07-05,2025-07-16,2025-08-04,,,Ponta Service,Jefferson Lemes Pereira
+LUAN CARVALHO PATEK,,693,DESLIGADO,2025-06-10,,Auxiliar geral ,DIURNO,2025-04-16,2025-05-06,2025-05-30,2025-06-14,2025-06-25,2025-07-14,,,Ponta Service,Viviane Dantas
+NATAN MIGUEL IANSEN DOS SANTOS,,327,EFETIVADO,,,Estoquista I,DIURNO,2022-05-23,2022-06-12,2022-07-06,2022-07-21,2022-08-01,2022-08-20,,,Ponta Service,Danielle Meller
+ALLAN MESSIAS DA ROSA,,694,DESLIGADO,2025-05-12,,AJ DE ASSITÊNCIA,DIURNO,2025-04-17,2025-05-07,2025-05-31,2025-06-15,2025-06-26,2025-07-15,,,Ponta Service,Cleyton Luiz Ramos
+LUIS HENRIQUE SILVERIO,,696,DESLIGADO,2025-06-02,,Auxiliar geral ,VESPERTINO,2025-04-23,2025-05-13,2025-06-06,2025-06-21,2025-07-02,2025-07-21,,,Ponta Service,Anderson de Paula Camargo
+MARCELO DA SILVA,,,DESLIGAMENTO SOLICITADO,,,Auxiliar geral ,DIURNO,2025-04-26,2025-05-16,2025-06-09,2025-06-24,2025-07-05,2025-07-24,,,JH,Jefferson Lemes Pereira
+NATANAEL LEMES HORST,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-07,2025-05-27,2025-06-20,2025-07-05,2025-07-16,2025-08-04,,,JH ,Jefferson Lemes Pereira
+FERNANDA MARTINS BUTURI,,702,DESLIGAMENTO SOLICITADO,,,Assistente Administrativo,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,Ponta Service,Cleyton Luiz Ramos
+NILSON FERREIRA,,607,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-11-11,2024-12-01,2024-12-25,2025-01-09,2025-01-20,2025-02-08,,,Ponta Service,Jean Mauricio Tarades 
+KAUA CAMARGO LOPES,,700,DESLIGADO,2025-05-20,,Auxiliar de Assist Técnica,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,Ponta Service,Cleyton Luiz Ramos
+NOEL ALEXANDRE CASTRO,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-09,2025-05-29,2025-06-22,2025-07-07,2025-07-18,2025-08-06,,,Ponta Service,Jefferson Lemes Pereira
+WESLEY ZAQUEL PITEL,,699,DESLIGAMENTO SOLICITADO,,,Conferente,DIURNO,2025-05-02,2025-05-22,2025-06-15,2025-06-30,2025-07-11,2025-07-30,,,Ponta Service,Cleyton Luiz Ramos
+OLINATHAN MARQUES RODRIGUES,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2025-03-27,2025-04-16,2025-05-10,2025-05-25,2025-06-05,2025-06-24,,,JH,Viviane Dantas
+ANTONIO GONÇALVES DOS SANTOS JUNIOR,,,DESLIGADO,2025-05-27,,,,2025-05-07,2025-05-27,2025-06-20,2025-07-05,2025-07-16,2025-08-04,,,Ponta Service,Adriano Alves de Almeida
+OSIEL CHIBILINSKI,BRIGADA / LEAN,,EXPERIENCIA,,,Coordenador de Logistica,Diurno,2025-05-19,2025-06-08,2025-07-02,2025-07-17,2025-07-28,2025-08-16,,,Ponta Service,Flavio Gobbo
+PATRICK ALVES DOS ANJOS,,372,EFETIVADO,,,Aux Logistica E-commerce,DIURNO,2023-02-02,2023-02-22,2023-03-18,2023-04-02,2023-04-13,2023-05-02,,,Ponta Service,Gilmar Rocha
+PATRICK VICTOR DOS SANTOS FERNANDES,,462,EFETIVADO,,,Auxiliar de estoque,DIURNO,2024-03-05,2024-03-25,2024-04-18,2024-05-03,2024-05-14,2024-06-02,,,Ponta Service,OSIEL CHIBILINSKI
+PAULO RAI ALVES DE OLIVEIRA,BRIGADA,568,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-10-04,2024-10-24,2024-11-17,2024-12-02,2024-12-13,2025-01-01,,,Ponta Service,Jefferson Lemes Pereira
+PAULO ROBERTO DE FREITAS,,,EFETIVADO,,,Analista,DIURNO,2009-09-01,2009-09-21,2009-10-15,2009-10-30,2009-11-10,2009-11-29,,,MM,Flavio Gobbo
+MATEUS PLENS DOS SANTOS,,,DESLIGADO,2025-07-09,,Auxiliar geral ,VESPERTINO,2025-05-08,2025-05-28,2025-06-21,2025-07-06,2025-07-17,2025-08-05,,,Ponta Service,Anderson de Paula Camargo
+PEDRO DE PAULA NEVES,,,EFETIVADO,,,,DIURNO,2016-12-01,2016-12-21,2017-01-14,2017-01-29,2017-02-09,2017-02-28,,,JH,Cleyton Luiz Ramos
+PEDRO ENRIC PADILHA,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-05-08,2025-05-28,2025-06-21,2025-07-06,2025-07-17,2025-08-05,,,Ponta Service,Jean Mauricio Tarades 
+PEDRO HENRIQUE DE ARAUJO,,464,EFETIVADO,,,CONFERENTE,DIURNO,2024-03-18,2024-04-07,2024-05-01,2024-05-16,2024-05-27,2024-06-15,,,Ponta Service,Cleyton Luiz Ramos
+RAFAEL DE JESUS BORGES,,,EFETIVADO,,,Auxiliar geral - Separador,NOTURNO,2025-02-05,2025-02-25,2025-03-21,2025-04-05,2025-04-16,2025-05-05,,,JH,Zaqueu Rocha Tebinca
+RAFAEL DE OLIVEIRA VAZ,BRIGADA,,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-06-01,2024-06-21,2024-07-15,2024-07-30,2024-08-10,2024-08-29,,,JH,OSIEL CHIBILINSKI
+RAFAEL GAVLOSKI CORREIA,,362,EFETIVADO,,,Auxiliar Adm III,DIURNO,2022-12-08,2022-12-28,2023-01-21,2023-02-05,2023-02-16,2023-03-07,,,Ponta Service,Danielle Meller
+MICHAEL TAQUES MACIEL,,,DESLIGADO,2025-07-14,,Auxiliar geral ,DIURNO,2025-05-14,2025-06-03,2025-06-27,2025-07-12,2025-07-23,2025-08-11,,,Ponta Service,Rian Marinho
+MATEUS TAQUES MARTINS,,,DESLIGAR,,,Auxiliar geral ,DIURNO,2025-05-15,2025-06-04,2025-06-28,2025-07-13,2025-07-24,2025-08-12,,,Ponta Service,Jefferson Lemes Pereira
+RAFAEL SLONIK,,,EFETIVADO,,,Aux Logistica E-commerce,DIURNO,,1900-01-20,1900-02-13,1900-02-28,1900-03-10,1900-03-29,,,MM,Gilmar Rocha
+RAMON CARNEIRO SENGER,,645,EFETIVADO,,,Auxiliar de Estoque,DIURNO,2025-01-30,2025-02-19,2025-03-15,2025-03-30,2025-04-10,2025-04-29,,,Ponta Service,Flavio Gobbo
+ERICK LEANDRO FERREIRA ZIPP,,,DESLIGADO,2025-06-09,,Auxiliar geral ,MATUTINO,2025-05-21,2025-06-10,2025-07-04,2025-07-19,2025-07-30,2025-08-18,,,Ponta Service,Adriano Alves de Almeida
+FERNANDO DA SILVA POZA,,,DESLIGADO,2025-07-09,,Auxiliar geral ,DIURNO,2025-05-21,2025-06-10,2025-07-04,2025-07-19,2025-07-30,2025-08-18,,,Ponta Service,Jefferson Lemes Pereira
+RIAN VINICIUS MARINHO DOS SANTOS,,311,EFETIVADO,,,Assistente Administrativo,NOTURNO,2022-02-10,2022-03-02,2022-03-26,2022-04-10,2022-04-21,2022-05-10,,,Ponta Service,Flavio Gobbo
+RICARDO AUGUSTO SILVA ROSA,,,EFETIVADO,,,Operador de Empilhadeira,MATUTINO,2024-06-01,2024-06-21,2024-07-15,2024-07-30,2024-08-10,2024-08-29,,,JH,Adriano Alves de Almeida
+LEONARDO JOSÉ TENEDINE,,,DESLIGADO,2025-07-08,,Auxiliar geral ,DIURNO,2025-05-23,2025-06-12,2025-07-06,2025-07-21,2025-08-01,2025-08-20,,,Ponta Service,Jefferson Lemes Pereira
+RICHARD BRANDÃO,,484,EFETIVADO,,,AJ DE ASSITÊNCIA,DIURNO,2024-06-17,2024-07-07,2024-07-31,2024-08-15,2024-08-26,2024-09-14,,,Ponta Service,Cleyton Luiz Ramos
+ROBERT DOS SANTOS SILVA,,,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2024-12-11,2024-12-31,2025-01-24,2025-02-08,2025-02-19,2025-03-10,,,HENNEBERG e SILVA,Anderson de Paula Camargo
+ROBERT RAMON SANDAKA,BRIGADA,692,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2025-04-16,2025-05-06,2025-05-30,2025-06-14,2025-06-25,2025-07-14,,,Ponta Service,Anderson de Paula Camargo
+ROBSON DOS SANTOS,,,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2025-04-05,2025-04-25,2025-05-19,2025-06-03,2025-06-14,2025-07-03,,,JH,Jefferson Lemes Pereira
+RODRIGO ZAVOLSKI SILVA,,245,EFETIVADO,,,Operador de Empilhadeira,VESPERTINO,2021-04-14,2021-05-04,2021-05-28,2021-06-12,2021-06-23,2021-07-12,,,Ponta Service,Anderson de Paula Camargo
+ROGERIO CRISTIAN DE MELLO,,626,EFETIVADO,,,Auxiliar geral ,VESPERTINO,2024-12-11,2024-12-31,2025-01-24,2025-02-08,2025-02-19,2025-03-10,,,Ponta Service,Anderson de Paula Camargo
+RONIERISOM NEVES RODRIGUES,,,EXPERIENCIA,,,Auxiliar geral,DIURNO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,Jefferson Lemes Pereira
+RACIEL TORRES GARCIA,,,DESLIGADO,2025-06-12,,Auxiliar geral ,VESPERTINO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Anderson de Paula Camargo
+SABRINA SANTOS CARVALHO,,674,EFETIVADO,,,Auxiliar de Estoque,DIURNO,2025-03-07,2025-03-27,2025-04-20,2025-05-05,2025-05-16,2025-06-04,,,Ponta Service,OSIEL CHIBILINSKI
+SANDRO GAVRON ,BRIGADA,605,EFETIVADO,,,Operador de Empilhadeira,MATUTINO,2024-11-07,2024-11-27,2024-12-21,2025-01-05,2025-01-16,2025-02-04,,,Ponta Service,Adriano Alves de Almeida
+GUILHERME MENDES GALVÃO,,,DESLIGADO,2025-06-05,,Auxiliar geral ,NOTURNO,2025-06-04,2025-06-24,2025-07-18,2025-08-02,2025-08-13,2025-09-01,,,Ponta Service,Zaqueu Rocha Tebinca
+ANGELICA GRZEBIELUCHA LACERDA,,,APRENDIZ,,,APRENDIZ,MATUTINO,2025-06-09,2025-06-29,2025-07-23,2025-08-07,2025-08-18,2025-09-06,,,Ponta Service,Danielle Meller
+SANDRO ROBERTO FERREIRA NUNES,,,EFETIVADO,,,CONFERENTE,NOTURNO,2016-12-01,2016-12-21,2017-01-14,2017-01-29,2017-02-09,2017-02-28,,,JEO,Zaqueu Rocha Tebinca
+SUSAN TALLYSSA ANTUNES FALCÃO,,,EFETIVADO,,,AUX DE ASSTÊNCIA,DIURNO,2024-01-02,2024-01-22,2024-02-15,2024-03-01,2024-03-12,2024-03-31,,,Ponta Service,Cleyton Luiz Ramos
+THALITTA RUAMA EVARISTO,LEAN,,EFETIVADO,,,Analista de Log. E-Commerce II,DIURNO,2021-11-20,2021-12-10,2022-01-03,2022-01-18,2022-01-29,2022-02-17,,,MM,Gilmar Rocha
+THIAGO DAL COL DE QUADROS,,,EXPERIENCIA,,,Auxiliar geral,DIURNO,2025-07-01,2025-07-21,2025-08-14,2025-08-29,2025-09-09,2025-09-28,,,JH,OSIEL CHIBILINSKI
+EMMILY RAVENA DOS SANTOS LIMA,,,APRENDIZ,,,APRENDIZ,MATUTINO,2025-06-10,2025-06-30,2025-07-24,2025-08-08,2025-08-19,2025-09-07,,,Ponta Service,Danielle Meller
+THIAGO JHONNY MENDES DE PAULA,5S / LEAN / ,426,EFETIVADO,,,Estoquista IV,DIURNO,2023-09-25,2023-10-15,2023-11-08,2023-11-23,2023-12-04,2023-12-23,,,Ponta Service,Danielle Meller
+THIAGO RYAN DOS SANTOS,,,EXPERIENCIA,,,Auxiliar geral,MATUTINO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Adriano Alves de Almeida
+THOMAS ROBSON MACHADO DE PAIVA,,591,EFETIVADO,,,AUXILIAR ADMINISTRATIVO,DIURNO,2024-10-24,2024-11-13,2024-12-07,2024-12-22,2025-01-02,2025-01-21,,,Ponta Service,Jefferson Lemes Pereira
+TIAGO DA SILVA FERRACIOLI,,538,EFETIVADO,,,Auxiliar geral ,DIURNO,2024-10-25,2024-11-14,2024-12-08,2024-12-23,2025-01-03,2025-01-22,,,Ponta Service,Magno Wenglarek
+VALDO LUIZ LANGUE,,,EFETIVADO,,,Operador de Empilhadeira,MATUTINO,2024-06-03,2024-06-23,2024-07-17,2024-08-01,2024-08-12,2024-08-31,,,JEO,Adriano Alves de Almeida
+VANDERLEI TRINDADE CAMARGO,,128,EFETIVADO,,,Operador de Empilhadeira Pl,NOTURNO,2013-06-26,2013-07-16,2013-08-09,2013-08-24,2013-09-04,2013-09-23,,,Ponta Service,Zaqueu Rocha Tebinca
+GABRIELI SANTANA DE OLIVEIRA,,,APRENDIZ,,,APRENDIZ,MATUTINO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,Ponta Service,Danielle Meller
+VICTOR THEODORO CUSTODIO DE MELO,,,EXPERIENCIA,,,Auxiliar geral,DIURNO,2025-06-11,2025-07-01,2025-07-25,2025-08-09,2025-08-20,2025-09-08,,,JH,Jefferson Lemes Pereira
+VINICIUS GABRIEL RODRIGUES DE OLIVEIRA,,579,EFETIVADO,2025-07-24,,CONFERENTE,DIURNO,2024-10-15,2024-11-04,2024-11-28,2024-12-13,2024-12-24,2025-01-12,,,Ponta Service,Jefferson Lemes Pereira
+VIVIANE APARECIDA DE PAULA DANTAS,LEAN,,EXPERIENCIA,,,Coordenador de Logistica II,DIURNO,2025-05-12,2025-06-01,2025-06-25,2025-07-10,2025-07-21,2025-08-09,,,Ponta Service,Flavio Gobbo
+LUIS MIGUEL DE OLIVEIRA,,,APRENDIZ,,,APRENDIZ,MATUTINO,2025-06-13,2025-07-03,2025-07-27,2025-08-11,2025-08-22,2025-09-10,,,Ponta Service,Danielle Meller
+WANDERLEI GONCALVES,,669,EFETIVADO,,,Motorista ,DIURNO,2025-03-03,2025-03-23,2025-04-16,2025-05-01,2025-05-12,2025-05-31,,,Ponta Service,Magno Wenglarek
+WASHINGTON LUIZ CORDEIRO DA SILVA,,633,EFETIVADO,,,AJ DE ASSITÊNCIA,DIURNO,2025-01-15,2025-02-04,2025-02-28,2025-03-15,2025-03-26,2025-04-14,,,Ponta Service,Cleyton Luiz Ramos
+WELLINGTON DOS SANTOS MAGALHÃES,,,EFETIVADO,,,Auxiliar geral ,DIURNO,2023-12-20,2024-01-09,2024-02-02,2024-02-17,2024-02-28,2024-03-18,,,JH,OSIEL CHIBILINSKI
+WESLEN FERNANDO CARNEIRO DE RAMOS,,,EXPERIENCIA,,,Auxiliar geral ,DIURNO,2025-06-02,2025-06-22,2025-07-16,2025-07-31,2025-08-11,2025-08-30,,,Ponta Service,Jefferson Lemes Pereira
+WESLEY ANDREY KLOSTER,BRIGADA,167,EFETIVADO,,,Assistente de Logística  Jr,DIURNO,2019-09-09,2019-09-29,2019-10-23,2019-11-07,2019-11-18,2019-12-07,,,Ponta Service,OSIEL CHIBILINSKI
+WESLEY NADAL PONTES,,689,EFETIVADO,,,Auxiliar geral ,MATUTINO,2025-04-09,2025-04-29,2025-05-23,2025-06-07,2025-06-18,2025-07-07,,,Ponta Service,Adriano Alves de Almeida
+WEVERTTON CORREA DOS SANTOS,,,EFETIVADO,,,ASSISTÊNTE 1,DIURNO,2019-08-19,2019-09-08,2019-10-02,2019-10-17,2019-10-28,2019-11-16,,,Ponta Service,Cleyton Luiz Ramos
+WILIAN DANTAS DE OLIVEIRA,BRIGADA,392,EFETIVADO,,,ASSISTÊNTE LOG 4,DIURNO,2023-04-24,2023-05-14,2023-06-07,2023-06-22,2023-07-03,2023-07-22,,,Ponta Service,Cleyton Luiz Ramos
+ZAQUEU ROCHA TEBINCA,LEAN,305,EFETIVADO,,,Coordenador de Logistica,DIURNO,2022-01-26,2022-02-15,2022-03-11,2022-03-26,2022-04-06,2022-04-25,,,Ponta Service,Flavio Gobbo
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,, ,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
+ ,,,,,,,,,,,,,,,,,
+`;
+
+        let allCollaborators = []; // Armazena todos os dados dos colaboradores
+        let currentEditingRowIndex = -1; // Rastreia a linha que está sendo editada
+        let rowToDeleteIndex = -1; // Rastreia o índice da linha a ser excluída
+
+        // Função para formatar datas para dd/mm/aaaa
+        function formatDate(dateString) {
+            if (!dateString || dateString.trim() === '') return '';
+            try {
+                const date = new Date(dateString);
+                // Verifica se a data é válida e não é a data de referência (1900-01-01)
+                if (!isNaN(date.getTime()) && date.getFullYear() !== 1900) {
+                    return date.toLocaleDateString('pt-BR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                }
+                return dateString; // Retorna o original se não for uma data válida ou for 1900
+            } catch (e) {
+                return dateString; // Retorna o original em caso de erro de parsing
+            }
+        }
+
+        // Função para formatar datas para YYYY-MM-DD para campos de input type="date"
+        function formatDateForInput(dateString) {
+            if (!dateString || dateString.trim() === '') return '';
+            try {
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime()) && date.getFullYear() !== 1900) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+                return ''; // Retorna vazio se não for uma data válida ou for 1900
+            } catch (e) {
+                return '';
+            }
+        }
+
+        // Função para verificar se uma data está nos próximos X dias
+        function isUpcoming(dateString, daysAhead = 30) {
+            if (!dateString || dateString.trim() === '') return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normaliza para o início do dia
+
+            const targetDate = new Date(dateString);
+            targetDate.setHours(0, 0, 0, 0); // Normaliza para o início do dia
+
+            const futureDateLimit = new Date();
+            futureDateLimit.setDate(today.getDate() + daysAhead);
+            futureDateLimit.setHours(0, 0, 0, 0);
+
+            // A data é "próxima" se for hoje ou no futuro, e dentro do limite de dias
+            return targetDate >= today && targetDate <= futureDateLimit;
+        }
+
+        // Função para analisar o texto CSV e preencher a tabela HTML
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            // Filtra linhas vazias ou com apenas vírgulas
+            const nonEmptyLines = lines.filter(line => line.trim() !== '' && line.trim().replace(/,/g, '') !== '');
+
+            if (nonEmptyLines.length === 0) {
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = `<tr><td colspan="19" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Nenhum dado encontrado no arquivo CSV.</td></tr>`;
+                return;
+            }
+
+            const headers = nonEmptyLines[0].split(',').map(header => header.trim());
+            allCollaborators = []; // Limpa os dados anteriores
+
+            for (let i = 1; i < nonEmptyLines.length; i++) {
+                const line = nonEmptyLines[i];
+                const data = line.split(',');
+
+                if (data.length !== headers.length) {
+                    console.warn(`Linha ${i + 1} ignorada devido a número inconsistente de colunas:`, line);
+                    continue;
+                }
+
+                let collaborator = {};
+                headers.forEach((header, index) => {
+                    collaborator[header] = data[index] ? data[index].trim() : '';
+                });
+                allCollaborators.push(collaborator);
+            }
+
+            renderTable(allCollaborators);
+            updateDashboardStats(allCollaborators);
+            displayUpcomingDates(allCollaborators);
+        }
+
+        // Função para renderizar a tabela com os dados fornecidos
+        function renderTable(collaboratorsToRender) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Limpa qualquer conteúdo existente
+
+            if (collaboratorsToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="19" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Nenhum colaborador encontrado com os critérios de busca.</td></tr>`;
+                return;
+            }
+
+            collaboratorsToRender.forEach((collaborator, index) => {
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-100');
+                row.dataset.rowIndex = index; // Adiciona um índice para fácil referência
+
+                Object.keys(collaborator).forEach(key => {
+                    const cell = document.createElement('td');
+                    cell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+                    cell.dataset.columnName = key; // Adiciona o nome da coluna para fácil referência
+
+                    // Formatação de datas
+                    const headerName = key.toLowerCase();
+                    if (headerName.includes('data') || headerName.includes('admissão') || headerName.includes('feedback') || headerName.includes('dias') || headerName.includes('férias')) {
+                        cell.textContent = formatDate(collaborator[key]);
+                    } else {
+                        cell.textContent = collaborator[key];
+                    }
+                    row.appendChild(cell);
+                });
+
+                // Adiciona a célula de ações
+                const actionsCell = document.createElement('td');
+                actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.classList.add('bg-blue-500', 'hover:bg-blue-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'mr-2', 'rounded-md');
+                editButton.onclick = () => toggleEditMode(index);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.classList.add('bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'rounded-md');
+                deleteButton.onclick = () => showConfirmationModal(index);
+                actionsCell.appendChild(deleteButton);
+
+                row.appendChild(actionsCell);
+                tbody.appendChild(row);
+            });
+        }
+
+        // Função para alternar o modo de edição de uma linha
+        function toggleEditMode(rowIndex) {
+            const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+            const editButton = row.querySelector('button:first-child');
+
+            if (row.classList.contains('editing')) {
+                // Se estiver editando, salvar as mudanças
+                saveRowChanges(rowIndex);
+                row.classList.remove('editing');
+                editButton.textContent = 'Editar';
+                editButton.classList.remove('bg-green-500', 'hover:bg-green-700');
+                editButton.classList.add('bg-blue-500', 'hover:bg-blue-700');
+            } else {
+                // Se não estiver editando, habilitar edição
+                if (currentEditingRowIndex !== -1) {
+                    // Se outra linha estiver sendo editada, salve-a primeiro
+                    toggleEditMode(currentEditingRowIndex);
+                }
+                enableRowEditing(rowIndex);
+                row.classList.add('editing');
+                editButton.textContent = 'Salvar';
+                editButton.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+                editButton.classList.add('bg-green-500', 'hover:bg-green-700');
+                currentEditingRowIndex = rowIndex;
+            }
+        }
+
+        // Habilita a edição de células em uma linha específica
+        function enableRowEditing(rowIndex) {
+            const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+            const cells = row.querySelectorAll('td:not(:last-child)'); // Todas as células exceto a de ações
+
+            cells.forEach(cell => {
+                const columnName = cell.dataset.columnName;
+                const currentValue = allCollaborators[rowIndex][columnName];
+
+                // Para campos de data, crie um input type="date"
+                const headerName = columnName.toLowerCase();
+                if (headerName.includes('data') || headerName.includes('admissão') || headerName.includes('feedback') || headerName.includes('dias') || headerName.includes('férias')) {
+                    const dateInput = document.createElement('input');
+                    dateInput.type = 'date';
+                    dateInput.value = formatDateForInput(currentValue);
+                    dateInput.classList.add('w-full', 'p-1', 'border', 'rounded-md');
+                    cell.innerHTML = ''; // Limpa o conteúdo da célula
+                    cell.appendChild(dateInput);
+                } else if (columnName === 'Situação') {
+                    const select = document.createElement('select');
+                    select.classList.add('w-full', 'p-1', 'border', 'rounded-md');
+                    const options = ['EFETIVADO', 'EXPERIENCIA', 'DESLIGADO', 'AFASTADO', 'FÉRIAS', 'APRENDIZ', 'DESLIGAMENTO SOLICITADO'];
+                    options.forEach(optionText => {
+                        const option = document.createElement('option');
+                        option.value = optionText;
+                        option.textContent = optionText;
+                        if (optionText === currentValue) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                    cell.innerHTML = '';
+                    cell.appendChild(select);
+                }
+                else {
+                    cell.contentEditable = true;
+                    cell.classList.add('border', 'border-blue-300', 'bg-blue-50'); // Adiciona estilo de edição
+                }
+            });
+        }
+
+        // Salva as mudanças de uma linha editada
+        function saveRowChanges(rowIndex) {
+            const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+            const cells = row.querySelectorAll('td:not(:last-child)');
+            const updatedCollaborator = {};
+
+            cells.forEach(cell => {
+                const columnName = cell.dataset.columnName;
+                const headerName = columnName.toLowerCase();
+                let newValue;
+
+                if (headerName.includes('data') || headerName.includes('admissão') || headerName.includes('feedback') || headerName.includes('dias') || headerName.includes('férias')) {
+                    const inputElement = cell.querySelector('input[type="date"]');
+                    newValue = inputElement ? inputElement.value : '';
+                } else if (columnName === 'Situação') {
+                    const selectElement = cell.querySelector('select');
+                    newValue = selectElement ? selectElement.value : '';
+                }
+                else {
+                    newValue = cell.textContent.trim();
+                }
+
+                updatedCollaborator[columnName] = newValue;
+                cell.contentEditable = false;
+                cell.classList.remove('border', 'border-blue-300', 'bg-blue-50'); // Remove estilo de edição
+            });
+
+            // Atualiza o objeto no array allCollaborators
+            allCollaborators[rowIndex] = updatedCollaborator;
+
+            // Re-renderiza a tabela para aplicar as formatações de data e atualizar o dashboard/datas importantes
+            renderTable(allCollaborators);
+            updateDashboardStats(allCollaborators);
+            displayUpcomingDates(allCollaborators);
+            currentEditingRowIndex = -1; // Reseta o índice da linha em edição
+        }
+
+        // Funções do Modal de Confirmação
+        function showConfirmationModal(rowIndex) {
+            rowToDeleteIndex = rowIndex;
+            document.getElementById('confirmation-modal').classList.remove('hidden');
+            document.getElementById('confirmation-modal').classList.add('flex');
+        }
+
+        function hideConfirmationModal() {
+            rowToDeleteIndex = -1;
+            document.getElementById('confirmation-modal').classList.add('hidden');
+            document.getElementById('confirmation-modal').classList.remove('flex');
+        }
+
+        function confirmDeletion() {
+            if (rowToDeleteIndex !== -1) {
+                deleteRow(rowToDeleteIndex);
+                hideConfirmationModal();
+            }
+        }
+
+        // Função para excluir uma linha
+        function deleteRow(rowIndex) {
+            allCollaborators.splice(rowIndex, 1); // Remove a linha do array
+            renderTable(allCollaborators); // Re-renderiza a tabela
+            updateDashboardStats(allCollaborators); // Atualiza as estatísticas
+            displayUpcomingDates(allCollaborators); // Atualiza as datas importantes
+        }
+
+        // Funções do Modal de Adicionar Colaborador
+        function showAddCollaboratorModal() {
+            document.getElementById('add-collaborator-modal').classList.remove('hidden');
+            document.getElementById('add-collaborator-modal').classList.add('flex');
+            document.getElementById('add-collaborator-form').reset(); // Limpa o formulário ao abrir
+        }
+
+        function hideAddCollaboratorModal() {
+            document.getElementById('add-collaborator-modal').classList.add('hidden');
+            document.getElementById('add-collaborator-modal').classList.remove('flex');
+        }
+
+        function addNewCollaborator() {
+            const form = document.getElementById('add-collaborator-form');
+            const newCollaborator = {};
+            // Garante que todos os cabeçalhos estejam presentes no novo colaborador
+            const headers = [
+                "Nome Colaborador", "Participação em projetos", "MATRICULA", "Situação",
+                "DATA DE DESLIGAMENTO", "PREMIAÇÃO", "Função ", "Turno", "Admissão",
+                "Feedback 20º dia", "Feedback 45º dia", "60 DIAS ", "Feedback 70º dia",
+                "90 dias", "FÉRIAS PROGRAMADAS", "Contato ", "empresa", "gestor"
+            ];
+
+            headers.forEach(header => {
+                const inputElement = form.querySelector(`[name="${header}"]`);
+                if (inputElement) {
+                    newCollaborator[header] = inputElement.value.trim();
+                } else {
+                    newCollaborator[header] = ''; // Garante que todas as colunas existam, mesmo que vazias
+                }
+            });
+
+            allCollaborators.push(newCollaborator);
+            renderTable(allCollaborators);
+            updateDashboardStats(allCollaborators);
+            displayUpcomingDates(allCollaborators);
+            hideAddCollaboratorModal();
+        }
+
+
+        // Função para atualizar as estatísticas do dashboard
+        function updateDashboardStats(collaborators) {
+            const total = collaborators.length;
+            const efetivados = collaborators.filter(c => c['Situação'] === 'EFETIVADO').length;
+            const experiencia = collaborators.filter(c => c['Situação'] === 'EXPERIENCIA').length;
+            const desligados = collaborators.filter(c => c['Situação'] === 'DESLIGADO').length;
+
+            // Cálculo simplificado do turnover: (Desligados / (Total - Desligados)) * 100
+            // Se não houver colaboradores ativos, o turnover é 0 para evitar divisão por zero.
+            const turnoverRate = (total - desligados > 0) ? ((desligados / (total - desligados)) * 100).toFixed(2) : 0;
+
+
+            document.getElementById('total-collaborators').textContent = total;
+            document.getElementById('effective-collaborators').textContent = efetivados;
+            document.getElementById('experience-collaborators').textContent = experiencia;
+            document.getElementById('turnover-rate').textContent = `${turnoverRate}%`;
+        }
+
+        // Função para exibir datas importantes (feedbacks, férias)
+        function displayUpcomingDates(collaborators) {
+            const upcomingDatesDiv = document.getElementById('upcoming-dates');
+            upcomingDatesDiv.innerHTML = ''; // Limpa conteúdo anterior
+            let hasUpcoming = false;
+
+            collaborators.forEach(collaborator => {
+                // Filtra colaboradores com situação "DESLIGADO" ou "APRENDIZ"
+                if (collaborator['Situação'] === 'DESLIGADO' || collaborator['Situação'] === 'APRENDIZ') {
+                    return; // Pula este colaborador
+                }
+
+                const name = collaborator['Nome Colaborador'];
+                const feedbackDates = [
+                    { label: 'Feedback 20º dia', date: collaborator['Feedback 20º dia'] },
+                    { label: 'Feedback 45º dia', date: collaborator['Feedback 45º dia'] },
+                    { label: '60 DIAS', date: collaborator['60 DIAS '] },
+                    { label: 'Feedback 70º dia', date: collaborator['Feedback 70º dia'] },
+                    { label: '90 dias', date: collaborator['90 dias'] }
+                ];
+                const feriasProgramadas = { label: 'FÉRIAS PROGRAMADAS', date: collaborator['FÉRIAS PROGRAMADAS'] };
+
+                feedbackDates.forEach(item => {
+                    if (isUpcoming(item.date)) {
+                        hasUpcoming = true;
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('upcoming-item');
+                        itemDiv.innerHTML = `<strong>${name}</strong><br><span>${item.label}: ${formatDate(item.date)}</span>`;
+                        upcomingDatesDiv.appendChild(itemDiv);
+                    }
+                });
+
+                if (isUpcoming(feriasProgramadas.date)) {
+                    hasUpcoming = true;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('upcoming-item');
+                    itemDiv.innerHTML = `<strong>${name}</strong><br><span>${feriasProgramadas.label}: ${formatDate(feriasProgramadas.date)}</span>`;
+                    upcomingDatesDiv.appendChild(itemDiv);
+                }
+            });
+
+            if (!hasUpcoming) {
+                upcomingDatesDiv.innerHTML = `<p class="text-gray-500 text-center col-span-full" id="no-upcoming-dates">Nenhuma data importante nos próximos 30 dias.</p>`;
+            }
+        }
+
+        // Função para filtrar a tabela com base no input de busca
+        function filterTable() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filteredCollaborators = allCollaborators.filter(collaborator => {
+                // Verifica todas as colunas para o termo de busca
+                return Object.values(collaborator).some(value =>
+                    value.toLowerCase().includes(searchTerm)
+                );
+            });
+            renderTable(filteredCollaborators);
+        }
+
+        // Adiciona os event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('search-input').addEventListener('keyup', filterTable);
+            document.getElementById('add-collaborator-btn').addEventListener('click', showAddCollaboratorModal);
+            parseCSV(csvData); // Carrega e exibe os dados ao carregar a página
+        });
+    </script>
+</body>
+</html>
