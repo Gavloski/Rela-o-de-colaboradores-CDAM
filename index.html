@@ -190,6 +190,34 @@
             <button id="add-collaborator-btn" class="w-full sm:w-1/3 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">Adicionar Colaborador</button>
         </div>
 
+        <!-- Filter Dropdowns Section -->
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Filtrar por Coluna</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="form-group">
+                    <label for="filter-situacao">Situação:</label>
+                    <select id="filter-situacao" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="applyFilters()">
+                        <option value="">Todas</option>
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-turno">Turno:</label>
+                    <select id="filter-turno" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="applyFilters()">
+                        <option value="">Todos</option>
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-gestor">Gestor:</label>
+                    <select id="filter-gestor" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="applyFilters()">
+                        <option value="">Todos</option>
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Upcoming Dates Section -->
         <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Próximas Datas Importantes (Próximos 30 dias)</h2>
@@ -203,25 +231,7 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider rounded-tl-lg">Nome Colaborador</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Participação em projetos</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">MATRICULA</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Situação</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">DATA DE DESLIGAMENTO</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">PREMIAÇÃO</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Função</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Turno</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Admissão</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 20º dia</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 45º dia</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">60 DIAS</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Feedback 70º dia</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">90 dias</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">FÉRIAS PROGRAMADAS</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">Contato</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">empresa</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider">gestor</th>
-                        <th class="px-6 py-3 bg-gray-700 text-left text-xs font-semibold text-white uppercase tracking-wider rounded-tr-lg">Ações</th>
+                        <!-- Cabeçalhos da tabela serão inseridos aqui pelo JavaScript -->
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -660,6 +670,8 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
 `;
 
         let allCollaborators = []; // Armazena todos os dados dos colaboradores
+        let allColumnNames = []; // Armazena todos os nomes das colunas
+        // Removido visibleColumns, pois agora usaremos filtros de dropdown
         let currentEditingRowIndex = -1; // Rastreia a linha que está sendo editada
         let rowToDeleteIndex = -1; // Rastreia o índice da linha a ser excluída
 
@@ -729,6 +741,8 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             }
 
             const headers = nonEmptyLines[0].split(',').map(header => header.trim());
+            allColumnNames = headers; // Armazena todos os nomes das colunas
+
             allCollaborators = []; // Limpa os dados anteriores
 
             for (let i = 1; i < nonEmptyLines.length; i++) {
@@ -747,18 +761,101 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
                 allCollaborators.push(collaborator);
             }
 
+            populateFilterDropdowns(); // Preenche os dropdowns de filtro
             renderTable(allCollaborators);
             updateDashboardStats(allCollaborators);
             displayUpcomingDates(allCollaborators);
         }
 
+        // Função para preencher os dropdowns de filtro
+        function populateFilterDropdowns() {
+            const situacaoFilter = document.getElementById('filter-situacao');
+            const turnoFilter = document.getElementById('filter-turno');
+            const gestorFilter = document.getElementById('filter-gestor');
+
+            // Limpa opções anteriores
+            situacaoFilter.innerHTML = '<option value="">Todas</option>';
+            turnoFilter.innerHTML = '<option value="">Todos</option>';
+            gestorFilter.innerHTML = '<option value="">Todos</option>';
+
+            const uniqueSituacoes = new Set();
+            const uniqueTurnos = new Set();
+            const uniqueGestores = new Set();
+
+            allCollaborators.forEach(collab => {
+                if (collab['Situação']) uniqueSituacoes.add(collab['Situação']);
+                if (collab['Turno']) uniqueTurnos.add(collab['Turno']);
+                if (collab['gestor']) uniqueGestores.add(collab['gestor']);
+            });
+
+            uniqueSituacoes.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                situacaoFilter.appendChild(option);
+            });
+
+            uniqueTurnos.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                turnoFilter.appendChild(option);
+            });
+
+            uniqueGestores.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                gestorFilter.appendChild(option);
+            });
+        }
+
+        // Função para aplicar os filtros e re-renderizar a tabela
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const selectedSituacao = document.getElementById('filter-situacao').value;
+            const selectedTurno = document.getElementById('filter-turno').value;
+            const selectedGestor = document.getElementById('filter-gestor').value;
+
+            const filteredAndSearchedCollaborators = allCollaborators.filter(collaborator => {
+                const matchesSearch = Object.values(collaborator).some(value =>
+                    value.toLowerCase().includes(searchTerm)
+                );
+
+                const matchesSituacao = selectedSituacao === '' || collaborator['Situação'] === selectedSituacao;
+                const matchesTurno = selectedTurno === '' || collaborator['Turno'] === selectedTurno;
+                const matchesGestor = selectedGestor === '' || collaborator['gestor'] === selectedGestor;
+
+                return matchesSearch && matchesSituacao && matchesTurno && matchesGestor;
+            });
+
+            renderTable(filteredAndSearchedCollaborators);
+        }
+
+
         // Função para renderizar a tabela com os dados fornecidos
         function renderTable(collaboratorsToRender) {
+            const theadTr = document.querySelector('thead tr');
             const tbody = document.querySelector('tbody');
+            theadTr.innerHTML = ''; // Limpa cabeçalhos existentes
             tbody.innerHTML = ''; // Limpa qualquer conteúdo existente
 
+            // Renderiza os cabeçalhos da tabela
+            allColumnNames.forEach(key => {
+                const th = document.createElement('th');
+                th.classList.add('px-6', 'py-3', 'bg-gray-700', 'text-left', 'text-xs', 'font-semibold', 'text-white', 'uppercase', 'tracking-wider');
+                th.textContent = key;
+                theadTr.appendChild(th);
+            });
+            // Adiciona o cabeçalho de Ações, que é sempre visível
+            const actionsTh = document.createElement('th');
+            actionsTh.classList.add('px-6', 'py-3', 'bg-gray-700', 'text-left', 'text-xs', 'font-semibold', 'text-white', 'uppercase', 'tracking-wider', 'rounded-tr-lg');
+            actionsTh.textContent = 'Ações';
+            theadTr.appendChild(actionsTh);
+
+
             if (collaboratorsToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="19" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Nenhum colaborador encontrado com os critérios de busca.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${allColumnNames.length + 1}" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Nenhum colaborador encontrado com os critérios de busca.</td></tr>`;
                 return;
             }
 
@@ -767,7 +864,7 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
                 row.classList.add('hover:bg-gray-100');
                 row.dataset.rowIndex = index; // Adiciona um índice para fácil referência
 
-                Object.keys(collaborator).forEach(key => {
+                allColumnNames.forEach(key => {
                     const cell = document.createElement('td');
                     cell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
                     cell.dataset.columnName = key; // Adiciona o nome da coluna para fácil referência
@@ -833,7 +930,8 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
         // Habilita a edição de células em uma linha específica
         function enableRowEditing(rowIndex) {
             const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
-            const cells = row.querySelectorAll('td:not(:last-child)'); // Todas as células exceto a de ações
+            // Seleciona apenas as células visíveis para edição
+            const cells = row.querySelectorAll('td:not(:last-child)');
 
             cells.forEach(cell => {
                 const columnName = cell.dataset.columnName;
@@ -874,8 +972,13 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
         // Salva as mudanças de uma linha editada
         function saveRowChanges(rowIndex) {
             const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+            // Seleciona todas as células visíveis para salvar as mudanças
             const cells = row.querySelectorAll('td:not(:last-child)');
             const updatedCollaborator = {};
+
+            // Preenche o objeto com os valores atuais do colaborador antes de atualizar
+            // Isso garante que colunas ocultas não sejam perdidas
+            Object.assign(updatedCollaborator, allCollaborators[rowIndex]);
 
             cells.forEach(cell => {
                 const columnName = cell.dataset.columnName;
@@ -905,6 +1008,7 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             renderTable(allCollaborators);
             updateDashboardStats(allCollaborators);
             displayUpcomingDates(allCollaborators);
+            populateFilterDropdowns(); // Atualiza os dropdowns caso um valor tenha sido alterado
             currentEditingRowIndex = -1; // Reseta o índice da linha em edição
         }
 
@@ -934,6 +1038,7 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             renderTable(allCollaborators); // Re-renderiza a tabela
             updateDashboardStats(allCollaborators); // Atualiza as estatísticas
             displayUpcomingDates(allCollaborators); // Atualiza as datas importantes
+            populateFilterDropdowns(); // Atualiza os dropdowns
         }
 
         // Funções do Modal de Adicionar Colaborador
@@ -952,14 +1057,8 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             const form = document.getElementById('add-collaborator-form');
             const newCollaborator = {};
             // Garante que todos os cabeçalhos estejam presentes no novo colaborador
-            const headers = [
-                "Nome Colaborador", "Participação em projetos", "MATRICULA", "Situação",
-                "DATA DE DESLIGAMENTO", "PREMIAÇÃO", "Função ", "Turno", "Admissão",
-                "Feedback 20º dia", "Feedback 45º dia", "60 DIAS ", "Feedback 70º dia",
-                "90 dias", "FÉRIAS PROGRAMADAS", "Contato ", "empresa", "gestor"
-            ];
-
-            headers.forEach(header => {
+            // Usa allColumnNames para garantir que a ordem e os nomes sejam consistentes
+            allColumnNames.forEach(header => {
                 const inputElement = form.querySelector(`[name="${header}"]`);
                 if (inputElement) {
                     newCollaborator[header] = inputElement.value.trim();
@@ -972,6 +1071,7 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             renderTable(allCollaborators);
             updateDashboardStats(allCollaborators);
             displayUpcomingDates(allCollaborators);
+            populateFilterDropdowns(); // Atualiza os dropdowns com o novo colaborador
             hideAddCollaboratorModal();
         }
 
@@ -1040,21 +1140,12 @@ Desligamentos devem ser com base nas datas em vermelho ,,,,,,,,,,,,,,,,,
             }
         }
 
-        // Função para filtrar a tabela com base no input de busca
-        function filterTable() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const filteredCollaborators = allCollaborators.filter(collaborator => {
-                // Verifica todas as colunas para o termo de busca
-                return Object.values(collaborator).some(value =>
-                    value.toLowerCase().includes(searchTerm)
-                );
-            });
-            renderTable(filteredCollaborators);
-        }
-
         // Adiciona os event listeners
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('search-input').addEventListener('keyup', filterTable);
+            document.getElementById('search-input').addEventListener('keyup', applyFilters); // Mudado para applyFilters
+            document.getElementById('filter-situacao').addEventListener('change', applyFilters);
+            document.getElementById('filter-turno').addEventListener('change', applyFilters);
+            document.getElementById('filter-gestor').addEventListener('change', applyFilters);
             document.getElementById('add-collaborator-btn').addEventListener('click', showAddCollaboratorModal);
             parseCSV(csvData); // Carrega e exibe os dados ao carregar a página
         });
